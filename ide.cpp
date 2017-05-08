@@ -10,16 +10,17 @@ IDE::IDE(QWidget *parent) :
     ui->splitter->setStretchFactor(1,1);
     timer = new QTimer(this);
     timer->start();
-    ui->openGLWidget->close();
     connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
 
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(compileShader()));
 
     connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
 
-    connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(close()));
+    connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(stop()));
 
-    connect(ui->actionHide_Editor, SIGNAL(triggered()), ui->textEdit, SLOT(toggle()));
+    connect(ui->actionEditor, SIGNAL(triggered()), ui->textEdit, SLOT(toggle()));
+    connect(ui->actionContext, SIGNAL(triggered()), ui->openGLWidget, SLOT(toggle()));
+
     connect(ui->openGLWidget, SIGNAL(resized()), ui->openGLWidget, SLOT(resizeGL()));
 }
 

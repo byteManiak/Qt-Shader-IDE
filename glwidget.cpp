@@ -49,7 +49,7 @@ void GLWidget::initializeGL()
     m_colors[10] = 0.0f;
     m_colors[11] = 0.0f;
 
-    glClearColor(0,0,0,0);
+    glClearColor(0, 0, 0, 1);
     QOpenGLShader v(QOpenGLShader::Vertex);
     v.compileSourceCode("attribute highp vec4 posAttr;\n"
                         "uniform mediump mat4 matrix;\n"
@@ -81,7 +81,7 @@ void GLWidget::paintGL()
 
     time+=.02f;
     prog.setAttributeArray( m_posAttr, m_vertices.data(), 3);
-    prog.setAttributeArray( m_colAttr, m_colors.data(), 3 );
+    prog.setAttributeArray( m_colAttr, m_colors.data(), 3);
     prog.enableAttributeArray( m_posAttr );
     prog.enableAttributeArray( m_colAttr );
 
@@ -90,7 +90,7 @@ void GLWidget::paintGL()
 
     if(QString(f->sourceCode()).toStdString().find("uniform vec2 resolution")!=std::string::npos)
         prog.setUniformValueArray("resolution", m_resolution.data(), 1, 2);
-    glDrawArrays( GL_QUADS, 0, 4 );
+    glDrawArrays( GL_QUADS, 0, 4);
 
     prog.disableAttributeArray( m_posAttr );
     prog.disableAttributeArray( m_colAttr );
@@ -101,14 +101,10 @@ void GLWidget::paintGL()
 
 }
 
-void GLWidget::reset()
-{
-    time = 0;
-}
+void GLWidget::reset() { time = 0; }
 
 void GLWidget::compile(QString src)
 {
-    prog.removeShader(f);
     f->compileSourceCode(src);
     prog.addShader(f);
 }
@@ -117,5 +113,13 @@ void GLWidget::resizeGL()
 {
     m_resolution[0] = this->width();
     m_resolution[1] = this->height();
-    glViewport(0,0, m_resolution[0], m_resolution[1]);
+    glViewport(0, 0, m_resolution[0], m_resolution[1]);
+}
+
+void GLWidget::stop() { prog.removeShader(f); }
+
+void GLWidget::toggle()
+{
+    if(isHidden()) show();
+    else close();
 }

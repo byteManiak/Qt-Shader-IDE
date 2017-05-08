@@ -33,6 +33,8 @@ public slots:
     void paintGL();
     void resizeGL();
     void reset();
+    void stop();
+    void toggle();
     void compile(QString);
 };
 
