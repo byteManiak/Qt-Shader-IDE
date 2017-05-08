@@ -10,13 +10,25 @@ IDE::IDE(QWidget *parent) :
     ui->splitter->setStretchFactor(1,1);
     timer = new QTimer(this);
     timer->start();
-    ui->openGLWidget->hide();
+    ui->openGLWidget->close();
     connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
-    connect(ui->actionRun, SIGNAL(triggered()), ui->openGLWidget, SLOT(show()));
+
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(compileShader()));
+
+    connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
+
     connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(close()));
+
+    connect(ui->openGLWidget, SIGNAL(resized()), ui->openGLWidget, SLOT(resizeGL()));
 }
 
 IDE::~IDE()
 {
     delete ui;
+}
+
+void IDE::compileShader()
+{
+    if(ui->openGLWidget->isHidden()) ui->openGLWidget->show();
+    ui->openGLWidget->compile(ui->textEdit->toPlainText());
 }

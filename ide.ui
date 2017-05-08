@@ -16,6 +16,12 @@
     <height>562</height>
    </size>
   </property>
+  <property name="baseSize">
+   <size>
+    <width>200</width>
+    <height>573</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Qt GLSL Fragment Shader IDE</string>
   </property>
@@ -41,86 +47,48 @@
     </property>
     <item>
      <widget class="QWidget" name="widget_2" native="true">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
         <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QSplitter" name="splitter">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="opaqueResize">
-          <bool>true</bool>
          </property>
          <property name="childrenCollapsible">
           <bool>false</bool>
          </property>
-         <widget class="QWidget" name="widget" native="true">
+         <widget class="GLWidget" name="openGLWidget">
           <property name="minimumSize">
            <size>
             <width>200</width>
             <height>0</height>
            </size>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
           <property name="baseSize">
            <size>
-            <width>0</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="GLWidget" name="openGLWidget"/>
-           </item>
-          </layout>
          </widget>
-         <widget class="QPlainTextEdit" name="plainTextEdit">
+         <widget class="QTextEdit" name="textEdit">
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -139,29 +107,20 @@
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
-          <property name="plainText">
-           <string>uniform float time;
-
-const float PI = 3.1415926535897932384626433832795;
-
-mat2 rotate2d(float angle){
-    return mat2(cos(angle+time),0.,
-                sin(angle+time),0.);
-}
-
-float stripes(vec2 st){
-    st = rotate2d( PI*-0.202 ) * st*5.;
-    return step(.5,1.0-smoothstep(.3,1.,abs(sin(st.x*PI))));
-}
-
-void main(){
-	vec2 resolution = vec2(300.0,100.0);
-	vec2 st = gl_FragCoord.xy/resolution.xy * sin(time/2.)*sin(time/2.);
-    st.x *= resolution.x/resolution.y;
-   
-    vec3 color = vec3(stripes(st));
-    gl_FragColor = vec4(color, 1.0);
-}</string>
+          <property name="html">
+           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Liberation Mono'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;uniform float time;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;uniform vec2 resolution;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;void main( void ) {&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; float t = time*length((sin(gl_FragCoord.xy/1000.))/resolution)*320.;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; vec3 color = vec3((sin(t*t)));&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; gl_FragColor = vec4( color, 1.0 );&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;}&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </widget>
@@ -200,9 +159,8 @@ void main(){
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionCompile_and_Run"/>
-    <addaction name="actionCompile"/>
     <addaction name="actionRun"/>
+    <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionBreak"/>
    </widget>
@@ -212,9 +170,16 @@ void main(){
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionHide_Editor"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
+   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen">
@@ -251,34 +216,12 @@ void main(){
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionCompile_and_Run">
-   <property name="text">
-    <string>Compile and Run</string>
-   </property>
-   <property name="toolTip">
-    <string>Compile and Run</string>
-   </property>
-   <property name="shortcut">
-    <string>F5</string>
-   </property>
-  </action>
-  <action name="actionCompile">
-   <property name="text">
-    <string>Compile</string>
-   </property>
-   <property name="toolTip">
-    <string>Compile</string>
-   </property>
-   <property name="shortcut">
-    <string>F6</string>
-   </property>
-  </action>
   <action name="actionRun">
    <property name="text">
     <string>Run</string>
    </property>
    <property name="shortcut">
-    <string>F7</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -291,7 +234,23 @@ void main(){
     <string>Break</string>
    </property>
    <property name="shortcut">
-    <string>F8</string>
+    <string>F7</string>
+   </property>
+  </action>
+  <action name="actionReset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
+  </action>
+  <action name="actionHide_Editor">
+   <property name="text">
+    <string>Hide/Unhide Editor</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
  </widget>
@@ -316,8 +275,8 @@ void main(){
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>311</x>
-     <y>197</y>
+     <x>399</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>

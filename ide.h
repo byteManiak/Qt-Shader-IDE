@@ -21,6 +21,9 @@ private:
     QTimer *timer;
     QWindow *GLcontext;
     Ui::IDE *ui;
+
+public slots:
+    void compileShader();
 };
 
 #endif // IDE_H
