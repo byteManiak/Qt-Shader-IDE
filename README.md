@@ -5,13 +5,13 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - Ability to write fragment shaders using ```time``` and ```resolution``` uniforms.
 
 ## To do
-[ ] Add ability to manage .glsl files.
-[ ] Add ability to change fonts.
-[ ] Syntax highlighting.
-[ ] Basic error checking.
-[ ] UI cleanup.
-[ ] Implement ```mouse``` uniform.
-[ ] Textures in vertex shader.
-[ ] ```Help``` section.
-[ ] Text formatting features.
+- [ ] Add ability to manage .glsl files.
+- [ ] Add ability to change fonts.
+- [ ] Syntax highlighting.
+- [ ] Basic error checking.
+- [ ] UI cleanup.
+- [ ] Implement ```mouse``` uniform.
+- [ ] Textures in vertex shader.
+- [ ] ```Help``` section.
+- [ ] Text formatting features.
 
