@@ -10,8 +10,8 @@ void GLWidget::initializeGL()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     m_resolution.resize(2);
-    m_resolution[0] = 200;
-    m_resolution[1] = 573;
+    m_resolution[0] = this->width();
+    m_resolution[1] = this->height();
 
     m_vertices.resize( 12 );
 

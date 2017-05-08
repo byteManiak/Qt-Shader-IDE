@@ -19,6 +19,7 @@ IDE::IDE(QWidget *parent) :
 
     connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(close()));
 
+    connect(ui->actionHide_Editor, SIGNAL(triggered()), ui->textEdit, SLOT(toggle()));
     connect(ui->openGLWidget, SIGNAL(resized()), ui->openGLWidget, SLOT(resizeGL()));
 }
 

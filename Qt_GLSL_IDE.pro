@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         ide.cpp \
-    glwidget.cpp
+    glwidget.cpp \
+    textedit.cpp
 
 HEADERS  += ide.h \
-    glwidget.h
+    glwidget.h \
+    textedit.h
 
 FORMS    += ide.ui
 
