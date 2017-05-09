@@ -5,6 +5,9 @@
 #-------------------------------------------------
 
 QT       += core gui
+win32 {
+    LIBS += -lOpengl32
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,11 +29,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         ide.cpp \
     glwidget.cpp \
-    textedit.cpp
+    textedit.cpp \
+    gltoolbar.cpp \
+    about.cpp
 
 HEADERS  += ide.h \
     glwidget.h \
-    textedit.h
+    textedit.h \
+    gltoolbar.h \
+    about.h
 
 FORMS    += ide.ui
 

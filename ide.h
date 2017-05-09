@@ -4,6 +4,7 @@
 #include <QWindow>
 #include <QMainWindow>
 #include <QTimer>
+#include "about.h"
 
 namespace Ui {
 class IDE;
@@ -21,6 +22,7 @@ private:
     QTimer *timer;
     QWindow *GLcontext;
     Ui::IDE *ui;
+    About *about;
 
 public slots:
     void compileShader();

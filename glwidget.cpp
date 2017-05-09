@@ -1,14 +1,9 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent)
-{
-
-}
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), scale(1), speed(1) {}
 
 void GLWidget::initializeGL()
 {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     m_resolution.resize(2);
     m_resolution[0] = this->width();
     m_resolution[1] = this->height();
@@ -53,8 +48,6 @@ void GLWidget::initializeGL()
     QOpenGLShader v(QOpenGLShader::Vertex);
     v.compileSourceCode("attribute highp vec4 posAttr;\n"
                         "uniform mediump mat4 matrix;\n"
-                        "uniform float time;\n"
-                        "uniform vec2 resolution;\n"
                         "attribute lowp vec4 colAttr;\n"
                         "varying lowp vec4 col;\n"
                         "void main() {\n"
@@ -76,10 +69,8 @@ void GLWidget::paintGL()
     prog.bind();
 
     QMatrix4x4 matrix;
-    matrix.ortho( -2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -2.0f );
-    matrix.translate( 0.0f, 0.0f, -1.0f );
 
-    time+=.02f;
+    time+=.02f * speed;
     prog.setAttributeArray( m_posAttr, m_vertices.data(), 3);
     prog.setAttributeArray( m_colAttr, m_colors.data(), 3);
     prog.enableAttributeArray( m_posAttr );
@@ -91,7 +82,6 @@ void GLWidget::paintGL()
     if(QString(f->sourceCode()).toStdString().find("uniform vec2 resolution")!=std::string::npos)
         prog.setUniformValueArray("resolution", m_resolution.data(), 1, 2);
     glDrawArrays( GL_QUADS, 0, 4);
-
     prog.disableAttributeArray( m_posAttr );
     prog.disableAttributeArray( m_colAttr );
 
@@ -105,6 +95,7 @@ void GLWidget::reset() { time = 0; }
 
 void GLWidget::compile(QString src)
 {
+    prog.removeShader(f);
     f->compileSourceCode(src);
     prog.addShader(f);
 }
@@ -113,7 +104,6 @@ void GLWidget::resizeGL()
 {
     m_resolution[0] = this->width();
     m_resolution[1] = this->height();
-    glViewport(0, 0, m_resolution[0], m_resolution[1]);
 }
 
 void GLWidget::stop() { prog.removeShader(f); }
@@ -123,3 +113,5 @@ void GLWidget::toggle()
     if(isHidden()) show();
     else close();
 }
+
+void GLWidget::speedGL(int s) { speed = s; }

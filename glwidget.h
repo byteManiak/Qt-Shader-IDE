@@ -21,8 +21,10 @@ private:
     std::vector<float> m_vertices;
     std::vector<float> m_colors;
     std::vector<float> m_resolution;
+    std::vector<float> m_virt_resolution;
 
     float time;
+    int scale, speed;
     int m_posAttr;
     int m_colAttr;
     int m_matrixUniform;
@@ -32,6 +34,7 @@ private:
 public slots:
     void paintGL();
     void resizeGL();
+    void speedGL(int);
     void reset();
     void stop();
     void toggle();

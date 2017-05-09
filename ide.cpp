@@ -12,16 +12,22 @@ IDE::IDE(QWidget *parent) :
     timer->start();
     connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
 
+    about = new About();
+    //about->show();
+
+    /** MENU ACTIONS **/
+
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(compileShader()));
-
     connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
-
     connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(stop()));
-
     connect(ui->actionEditor, SIGNAL(triggered()), ui->textEdit, SLOT(toggle()));
     connect(ui->actionContext, SIGNAL(triggered()), ui->openGLWidget, SLOT(toggle()));
+    connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
+
+    /** CONTEXT SPECIFIC **/
 
     connect(ui->openGLWidget, SIGNAL(resized()), ui->openGLWidget, SLOT(resizeGL()));
+    connect(ui->toolBar->speed_slider, SIGNAL(valueChanged(int)), ui->openGLWidget, SLOT(speedGL(int)));
 }
 
 IDE::~IDE()
