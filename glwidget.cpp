@@ -70,48 +70,15 @@ void GLWidget::paintGL()
     if(!prog.bind())
     {
         std::string error_out;
-        std::stringstream f_err(f->log().toStdString());
-        if(f_err.str().size())
+        if(!f->log().toStdString().empty())
+            error_out += "In fragment shader:\n" + f->log().toStdString() + "\n";
+        if(!v->log().toStdString().empty())
+        error_out += "In vertex shader:\n" + v->log().toStdString() + "\n";
+        if(prev_error != error_out)
         {
-            std::string buf, get_f_err;
-            while(std::getline(f_err, buf))
-            {
-                std::stringstream b(buf);
-                std::string buf2;
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2, '(');
-                get_f_err += "In fragment shader, at line ";
-                get_f_err += std::to_string(std::stoi(buf2)-3);
-                get_f_err += ":";
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2);
-                get_f_err += buf2 + "\n\0";
-                error_out += get_f_err;
-            }
+            prev_error = error_out;
+            emit outputError(QString::fromStdString(error_out));
         }
-
-        std::stringstream v_err(v->log().toStdString());
-        if(v_err.str().size())
-        {
-            std::string buf, get_v_err;
-            while(std::getline(v_err, buf))
-            {
-                std::stringstream b(buf);
-                std::string buf2;
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2, '(');
-                get_v_err += "In vertex shader, at line ";
-                get_v_err += std::to_string(std::stoi(buf2)-6);
-                get_v_err += ":";
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2, ':');
-                std::getline(b, buf2);
-                get_v_err += buf2 + "\n\0";
-                error_out += get_v_err;
-            }
-        }
-        emit outputError(QString::fromStdString(error_out));
         return;
     }
     emit noError();

@@ -38,6 +38,8 @@ private:
     QOpenGLShader *v, *f;
     QString v_str, f_str;
 
+    std::string prev_error;
+
 public slots:
     void paintGL();
     void resizeGL();
