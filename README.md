@@ -14,3 +14,5 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - [ ] ```Help``` section.
 - [ ] Text formatting features.
 - [x] Include all uniforms and attributes by default. (not visible to the user)
+
+Doesn't quite work on Windows yet. Need to do more debugging.
