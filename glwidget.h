@@ -13,7 +13,7 @@ class GLWidget : public QOpenGLWidget
     Q_OBJECT
 public:
     explicit GLWidget(QWidget *parent = 0);
-    ~GLWidget() {}
+    ~GLWidget();
 
 signals:
     void outputError(QString);
@@ -22,18 +22,17 @@ signals:
 private:
     void initializeGL();
 
-    QOpenGLShaderProgram prog;
-    std::vector<float> m_vertices;
-    std::vector<float> m_colors;
-    std::vector<float> m_resolution;
-    std::vector<float> m_virt_resolution;
-
-    float time;
     int speed;
-    bool shader_error;
+    float time;
     int m_posAttr;
     int m_colAttr;
     int m_matrixUniform;
+
+    QOpenGLShaderProgram *prog;
+    std::vector<float> m_vertices;
+    std::vector<float> m_colors;
+    std::vector<float> m_resolution;
+
 
     QOpenGLShader *v, *f;
     QString v_str, f_str;

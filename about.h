@@ -13,8 +13,10 @@ class About : public QWidget
 public:
     explicit About(QWidget *parent = 0);
 
+    ~About() { delete license; delete layout; }
 private:
     QLayout *layout;
+    QTextBrowser *license;
     std::ifstream f;
 };
 

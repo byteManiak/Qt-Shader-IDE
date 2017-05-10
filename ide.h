@@ -20,7 +20,6 @@ public:
 
 private:
     Ui::IDE *ui;
-    QTextBrowser *error_output;
     QTimer *timer;
     QWindow *GLcontext;
     About *about;

@@ -44,6 +44,9 @@ IDE::IDE(QWidget *parent) :
 
 IDE::~IDE()
 {
+    delete timer;
+    delete GLcontext;
+    delete about;
     delete ui;
 }
 

@@ -1,6 +1,6 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), shader_error(false)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), time(0)
 {
     v_str += "uniform mat4 matrix;\n"
     "attribute vec4 posAttr;\n"
@@ -13,6 +13,7 @@ GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), shader_er
 
 void GLWidget::initializeGL()
 {
+    prog = new QOpenGLShaderProgram(this);
     m_resolution.resize(2);
     m_resolution[0] = this->width();
     m_resolution[1] = this->height();
@@ -56,18 +57,17 @@ void GLWidget::initializeGL()
     glClearColor(0, 0, 0, 1);
     v = new QOpenGLShader(QOpenGLShader::Vertex);
     f = new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!prog.link()) return;
-    m_posAttr = prog.attributeLocation("posAttr");
-    m_colAttr = prog.attributeLocation("colAttr");
-    m_matrixUniform = prog.uniformLocation("matrix");
+    if(!prog->link()) return;
+    m_posAttr = prog->attributeLocation("posAttr");
+    m_colAttr = prog->attributeLocation("colAttr");
+    m_matrixUniform = prog->uniformLocation("matrix");
 }
 
 void GLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    if(prog.shaders().empty()) return;
-    if(!prog.bind())
+    if(!prog->bind())
     {
         std::string error_out;
         if(!f->log().toStdString().empty())
@@ -86,23 +86,24 @@ void GLWidget::paintGL()
     QMatrix4x4 matrix;
 
     time+=.02f * speed;
-        prog.setAttributeArray( m_posAttr, m_vertices.data(), 3);
-        prog.enableAttributeArray( m_posAttr );
-        glDrawArrays( GL_QUADS, 0, 4);
-        prog.disableAttributeArray( m_posAttr );
 
-        prog.setAttributeArray( m_colAttr, m_colors.data(), 3);
-        prog.enableAttributeArray( m_colAttr );
-        glDrawArrays( GL_QUADS, 0, 4);
-        prog.disableAttributeArray( m_colAttr );
+    prog->setAttributeArray( m_posAttr, m_vertices.data(), 3);
+    prog->enableAttributeArray( m_posAttr );
+    glDrawArrays( GL_QUADS, 0, 4);
+    prog->disableAttributeArray( m_posAttr );
 
-        prog.setUniformValue("time", time);
+    prog->setAttributeArray( m_colAttr, m_colors.data(), 3);
+    prog->enableAttributeArray( m_colAttr );
+    glDrawArrays( GL_QUADS, 0, 4);
+    prog->disableAttributeArray( m_colAttr );
 
-        prog.setUniformValueArray("resolution", m_resolution.data(), 1, 2);
+    prog->setUniformValue("time", time);
 
-        prog.setUniformValue(m_matrixUniform, matrix);
+    prog->setUniformValueArray("resolution", m_resolution.data(), 1, 2);
 
-    prog.release();
+    prog->setUniformValue(m_matrixUniform, matrix);
+
+    prog->release();
 
 }
 
@@ -112,15 +113,15 @@ void GLWidget::compile(QString v_src, QString f_src)
 {
     QString v_strsrc(v_str);
     v_strsrc += v_src;
-    prog.removeShader(v);
+    prog->removeShader(v);
     v->compileSourceCode(v_strsrc);
-    prog.addShader(v);
+    prog->addShader(v);
 
     QString f_strsrc(f_str);
     f_strsrc += f_src;
-    prog.removeShader(f);
+    prog->removeShader(f);
     f->compileSourceCode(f_strsrc);
-    prog.addShader(f);
+    prog->addShader(f);
 }
 
 void GLWidget::resizeGL()
@@ -129,7 +130,7 @@ void GLWidget::resizeGL()
     m_resolution[1] = this->height();
 }
 
-void GLWidget::stop() { prog.removeAllShaders(); }
+void GLWidget::stop() { prog->removeAllShaders(); }
 
 void GLWidget::toggle()
 {
@@ -138,3 +139,16 @@ void GLWidget::toggle()
 }
 
 void GLWidget::speedGL(int s) { speed = s; }
+
+GLWidget::~GLWidget()
+{
+    m_vertices.erase(m_vertices.begin(), m_vertices.end());
+    m_colors.erase(m_colors.begin(), m_colors.end());
+    m_resolution.erase(m_resolution.begin(), m_resolution.end());
+    prog->removeAllShaders();
+    delete prog;
+    delete v;
+    delete f;
+    v_str.clear();
+    f_str.clear();
+}
