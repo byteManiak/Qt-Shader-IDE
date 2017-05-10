@@ -29,7 +29,7 @@ private:
     int m_colAttr;
     int m_matrixUniform;
 
-    QOpenGLShader *f;
+    QOpenGLShader *v, *f;
 
 public slots:
     void paintGL();
@@ -38,7 +38,7 @@ public slots:
     void reset();
     void stop();
     void toggle();
-    void compile(QString);
+    void compile(QString, QString);
 };
 
 #endif // GLWIDGET_H

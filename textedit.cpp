@@ -1,9 +1,9 @@
 #include "textedit.h"
 
-TextEdit::TextEdit(QWidget *parent) : QTextEdit(parent)
+TextEdit::TextEdit(QWidget *parent) : QPlainTextEdit(parent)
 {
-    QFontMetrics f(this->font());
-    setTabStopWidth(f.width("    "));
+    QFontMetrics f(font());
+    setTabStopWidth(10*f.width(' '));
 }
 
 void TextEdit::toggle()

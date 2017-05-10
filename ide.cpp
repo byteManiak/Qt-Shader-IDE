@@ -8,19 +8,20 @@ IDE::IDE(QWidget *parent) :
     ui->setupUi(this);
     ui->splitter->setStretchFactor(0,1);
     ui->splitter->setStretchFactor(1,1);
+    ui->splitter->setStretchFactor(2,1);
     timer = new QTimer(this);
     timer->start();
     connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
 
     about = new About();
-    //about->show();
 
     /** MENU ACTIONS **/
 
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(compileShader()));
     connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
     connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(stop()));
-    connect(ui->actionEditor, SIGNAL(triggered()), ui->textEdit, SLOT(toggle()));
+    connect(ui->actionFragmentEditor, SIGNAL(triggered()), ui->fragPlainTextEdit, SLOT(toggle()));
+    connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
     connect(ui->actionContext, SIGNAL(triggered()), ui->openGLWidget, SLOT(toggle()));
     connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
 
@@ -38,5 +39,5 @@ IDE::~IDE()
 void IDE::compileShader()
 {
     if(ui->openGLWidget->isHidden()) ui->openGLWidget->show();
-    ui->openGLWidget->compile(ui->textEdit->toPlainText());
+    ui->openGLWidget->compile(ui->vertPlainTextEdit->toPlainText(), ui->fragPlainTextEdit->toPlainText());
 }

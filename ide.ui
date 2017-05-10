@@ -48,28 +48,10 @@
     <item>
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
        <item>
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="childrenCollapsible">
-          <bool>false</bool>
          </property>
          <widget class="GLWidget" name="openGLWidget">
           <property name="sizePolicy">
@@ -91,7 +73,7 @@
            </size>
           </property>
          </widget>
-         <widget class="TextEdit" name="textEdit">
+         <widget class="TextEdit" name="fragPlainTextEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -112,28 +94,45 @@
           </property>
           <property name="font">
            <font>
-            <family>Less Perfect DOS VGA</family>
-            <pointsize>12</pointsize>
+            <family>Liberation Mono</family>
+            <pointsize>10</pointsize>
             <kerning>false</kerning>
            </font>
           </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
-          <property name="html">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Less Perfect DOS VGA'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;uniform float time;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;uniform vec2 resolution;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;void main() &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;{&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;	vec2 p = gl_FragCoord.xy/resolution;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;	vec3 col = vec3(sin(p.x*30.-time)*sin(p.y*30.+time), sin(p.y*40.+time)*sin(p.x*40.+time), sin(p.x*50.+time)*sin(p.y*50.-time)) * (.9-distance(p, vec2(.5)));&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;	gl_FragColor = vec4(col, 1.0);&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;}&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <property name="plainText">
+           <string>uniform float time;
+uniform vec2 resolution;
+
+void main() 
+{
+	vec2 p = gl_FragCoord.xy/resolution;
+	vec3 col = vec3(sin(p.x*30.-time)*sin(p.y*30.+time), sin(p.y*40.+time)*sin(p.x*40.+time), sin(p.x*50.+time)*sin(p.y*50.-time)) * (.9-distance(p, vec2(.5)));
+	gl_FragColor = vec4(col, 1.0);
+}</string>
+          </property>
+         </widget>
+         <widget class="TextEdit" name="vertPlainTextEdit">
+          <property name="font">
+           <font>
+            <family>Liberation Mono</family>
+            <pointsize>10</pointsize>
+            <italic>false</italic>
+           </font>
+          </property>
+          <property name="plainText">
+           <string>uniform mat4 matrix;
+attribute vec4 posAttr;
+attribute vec4 colAttr;
+varying vec4 col;
+
+void main() 
+{
+	col = colAttr;
+	gl_Position = matrix * posAttr;
+}</string>
           </property>
          </widget>
         </widget>
@@ -186,7 +185,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Window</string>
     </property>
-    <addaction name="actionEditor"/>
+    <addaction name="actionVertexEditor"/>
+    <addaction name="actionFragmentEditor"/>
     <addaction name="actionContext"/>
    </widget>
    <addaction name="menuFile"/>
@@ -272,7 +272,7 @@ p, li { white-space: pre-wrap; }
     <string>F6</string>
    </property>
   </action>
-  <action name="actionEditor">
+  <action name="actionVertexEditor">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -280,10 +280,10 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Editor</string>
+    <string>Vertex Editor</string>
    </property>
    <property name="shortcut">
-    <string>F2</string>
+    <string>F3</string>
    </property>
   </action>
   <action name="actionContext">
@@ -297,7 +297,21 @@ p, li { white-space: pre-wrap; }
     <string>Context</string>
    </property>
    <property name="shortcut">
-    <string>F3</string>
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionFragmentEditor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fragment Editor</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
  </widget>
@@ -309,14 +323,14 @@ p, li { white-space: pre-wrap; }
    <header>glwidget.h</header>
   </customwidget>
   <customwidget>
-   <class>TextEdit</class>
-   <extends>QTextEdit</extends>
-   <header>textedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>GLToolBar</class>
    <extends>QToolBar</extends>
    <header>gltoolbar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>textedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -31,13 +31,15 @@ SOURCES += main.cpp\
     glwidget.cpp \
     textedit.cpp \
     gltoolbar.cpp \
-    about.cpp
+    about.cpp \
+    glslsyntax.cpp
 
 HEADERS  += ide.h \
     glwidget.h \
     textedit.h \
     gltoolbar.h \
-    about.h
+    about.h \
+    glslsyntax.h
 
 FORMS    += ide.ui
 

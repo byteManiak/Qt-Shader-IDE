@@ -2,9 +2,10 @@
 #define TEXTEDIT_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QSyntaxHighlighter>
 
-class TextEdit : public QTextEdit
+class TextEdit : public QPlainTextEdit
 {
     Q_OBJECT
 public:
