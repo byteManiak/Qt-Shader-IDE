@@ -69,7 +69,6 @@ void GLWidget::paintGL()
     if(prog.shaders().empty()) return;
     if(!prog.bind())
     {
-        if(shader_error) return; //if still receiving errors, skip output. We already know what's wrong.
         std::string error_out;
         std::stringstream f_err(f->log().toStdString());
         if(f_err.str().size())
@@ -113,11 +112,9 @@ void GLWidget::paintGL()
             }
         }
         emit outputError(QString::fromStdString(error_out));
-        shader_error = true;
         return;
     }
     emit noError();
-    shader_error = false;
 
     QMatrix4x4 matrix;
 
