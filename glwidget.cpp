@@ -1,6 +1,15 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), scale(1), speed(1) {}
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), scale(1), speed(1)
+{
+    v_str += "uniform mat4 matrix;\n"
+    "attribute vec4 posAttr;\n"
+    "attribute vec4 colAttr;\n"
+    "varying vec4 col;\n";
+
+    f_str += "uniform float time;\n"
+    "uniform vec2 resolution;\n";
+}
 
 void GLWidget::initializeGL()
 {
@@ -87,12 +96,16 @@ void GLWidget::reset() { time = 0; }
 
 void GLWidget::compile(QString v_src, QString f_src)
 {
+    QString v_strsrc(v_str);
+    v_strsrc += v_src;
     prog.removeShader(v);
-    v->compileSourceCode(v_src);
+    v->compileSourceCode(v_strsrc);
     prog.addShader(v);
 
+    QString f_strsrc(f_str);
+    f_strsrc += f_src;
     prog.removeShader(f);
-    f->compileSourceCode(f_src);
+    f->compileSourceCode(f_strsrc);
     prog.addShader(f);
 }
 

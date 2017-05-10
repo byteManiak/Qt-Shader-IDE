@@ -103,10 +103,7 @@
            <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="plainText">
-           <string>uniform float time;
-uniform vec2 resolution;
-
-void main() 
+           <string>void main() 
 {
 	vec2 p = gl_FragCoord.xy/resolution;
 	vec3 col = vec3(sin(p.x*30.-time)*sin(p.y*30.+time), sin(p.y*40.+time)*sin(p.x*40.+time), sin(p.x*50.+time)*sin(p.y*50.-time)) * (.9-distance(p, vec2(.5)));
@@ -123,12 +120,7 @@ void main()
            </font>
           </property>
           <property name="plainText">
-           <string>uniform mat4 matrix;
-attribute vec4 posAttr;
-attribute vec4 colAttr;
-varying vec4 col;
-
-void main() 
+           <string>void main() 
 {
 	col = colAttr;
 	gl_Position = matrix * posAttr;

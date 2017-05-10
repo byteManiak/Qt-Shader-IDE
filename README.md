@@ -13,4 +13,4 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - [ ] Textures in vertex shader.
 - [ ] ```Help``` section.
 - [ ] Text formatting features.
-- [ ] Include all uniforms and attributes by default. (not visible to the user)
+- [x] Include all uniforms and attributes by default. (not visible to the user)

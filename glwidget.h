@@ -30,6 +30,7 @@ private:
     int m_matrixUniform;
 
     QOpenGLShader *v, *f;
+    QString v_str, f_str;
 
 public slots:
     void paintGL();
