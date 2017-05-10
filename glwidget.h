@@ -6,6 +6,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <iostream>
+#include <sstream>
 
 class GLWidget : public QOpenGLWidget
 {    
@@ -13,6 +14,10 @@ class GLWidget : public QOpenGLWidget
 public:
     explicit GLWidget(QWidget *parent = 0);
     ~GLWidget() {}
+
+signals:
+    void outputError(QString);
+    void noError();
 
 private:
     void initializeGL();
@@ -24,7 +29,8 @@ private:
     std::vector<float> m_virt_resolution;
 
     float time;
-    int scale, speed;
+    int speed;
+    bool shader_error;
     int m_posAttr;
     int m_colAttr;
     int m_matrixUniform;

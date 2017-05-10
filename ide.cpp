@@ -9,8 +9,12 @@ IDE::IDE(QWidget *parent) :
     ui->splitter->setStretchFactor(0,1);
     ui->splitter->setStretchFactor(1,1);
     ui->splitter->setStretchFactor(2,1);
+
+    ui->splitter_2->setStretchFactor(0, 2);
+    ui->splitter_2->setStretchFactor(1, 1);
     timer = new QTimer(this);
     timer->start();
+
     connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
 
     about = new About();
@@ -29,6 +33,13 @@ IDE::IDE(QWidget *parent) :
 
     connect(ui->openGLWidget, SIGNAL(resized()), ui->openGLWidget, SLOT(resizeGL()));
     connect(ui->toolBar->speed_slider, SIGNAL(valueChanged(int)), ui->openGLWidget, SLOT(speedGL(int)));
+
+    /** ERROR OUTPUT **/
+
+    ui->textBrowser->hide();
+    connect(ui->openGLWidget, SIGNAL(noError()), ui->textBrowser, SLOT(close()));
+    connect(ui->openGLWidget, SIGNAL(outputError(QString)), ui->textBrowser, SLOT(setText(QString)));
+    connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
 }
 
 IDE::~IDE()

@@ -5,7 +5,7 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - [ ] Add ability to manage .glsl files.
 - [ ] Add ability to change fonts.
 - [ ] Syntax highlighting.
-- [ ] Basic error checking.
+- [x] Basic error checking.
 - [ ] UI cleanup.
 - [x] Implement ```time``` uniform.
 - [x] Implement ```resolution``` uniform.

@@ -1,6 +1,6 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), scale(1), speed(1)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), shader_error(false)
 {
     v_str += "uniform mat4 matrix;\n"
     "attribute vec4 posAttr;\n"
@@ -67,7 +67,57 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     if(prog.shaders().empty()) return;
-    if(!prog.bind()) return;
+    if(!prog.bind())
+    {
+        if(shader_error) return; //if still receiving errors, skip output. We already know what's wrong.
+        std::string error_out;
+        std::stringstream f_err(f->log().toStdString());
+        if(f_err.str().size())
+        {
+            std::string buf, get_f_err;
+            while(std::getline(f_err, buf))
+            {
+                std::stringstream b(buf);
+                std::string buf2;
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2, '(');
+                get_f_err += "In fragment shader, at line ";
+                get_f_err += std::to_string(std::stoi(buf2)-3);
+                get_f_err += ":";
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2);
+                get_f_err += buf2 + "\n\0";
+                error_out += get_f_err;
+            }
+        }
+
+        std::stringstream v_err(v->log().toStdString());
+        if(v_err.str().size())
+        {
+            std::string buf, get_v_err;
+            while(std::getline(v_err, buf))
+            {
+                std::stringstream b(buf);
+                std::string buf2;
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2, '(');
+                get_v_err += "In vertex shader, at line ";
+                get_v_err += std::to_string(std::stoi(buf2)-6);
+                get_v_err += ":";
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2, ':');
+                std::getline(b, buf2);
+                get_v_err += buf2 + "\n\0";
+                error_out += get_v_err;
+            }
+        }
+        emit outputError(QString::fromStdString(error_out));
+        shader_error = true;
+        return;
+    }
+    emit noError();
+    shader_error = false;
 
     QMatrix4x4 matrix;
 

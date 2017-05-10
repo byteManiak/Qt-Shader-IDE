@@ -19,9 +19,10 @@ public:
     ~IDE();
 
 private:
+    Ui::IDE *ui;
+    QTextBrowser *error_output;
     QTimer *timer;
     QWindow *GLcontext;
-    Ui::IDE *ui;
     About *about;
 
 public slots:

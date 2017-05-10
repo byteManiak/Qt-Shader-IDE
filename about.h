@@ -2,19 +2,20 @@
 #define ABOUT_H
 
 #include <QWidget>
-#include <QWindow>
-#include <QMainWindow>
 #include <QTextBrowser>
 #include <QLayout>
+#include <QLabel>
+#include <fstream>
 
-class About : public QMainWindow
+class About : public QWidget
 {
     Q_OBJECT
 public:
     explicit About(QWidget *parent = 0);
 
 private:
-    QTextBrowser *license;
+    QLayout *layout;
+    std::ifstream f;
 };
 
 #endif // ABOUT_H
