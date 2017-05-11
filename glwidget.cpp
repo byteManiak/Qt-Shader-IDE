@@ -68,7 +68,7 @@ void GLWidget::paintGL()
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    //if(!prog->shaders().size()) return;
+    if(!prog->shaders().size()) return;
     if(!prog->bind())
     {
         std::string error_out;
