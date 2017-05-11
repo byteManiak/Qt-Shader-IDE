@@ -38,21 +38,21 @@ void GLWidget::initializeGL()
 
     m_colors.resize( 12 );
 
-    m_colors[0] = 0.0f;
-    m_colors[1] = 0.0f;
-    m_colors[2] = 0.0f;
+    m_colors[0] = 1.0f;
+    m_colors[1] = 1.0f;
+    m_colors[2] = 1.0f;
 
-    m_colors[3] = 0.0f;
-    m_colors[4] = 0.0f;
-    m_colors[5] = 0.0f;
+    m_colors[3] = 1.0f;
+    m_colors[4] = 1.0f;
+    m_colors[5] = 1.0f;
 
-    m_colors[6] = 0.0f;
-    m_colors[7] = 0.0f;
-    m_colors[8] = 0.0f;
+    m_colors[6] = 1.0f;
+    m_colors[7] = 1.0f;
+    m_colors[8] = 1.0f;
 
-    m_colors[9] = 0.0f;
-    m_colors[10] = 0.0f;
-    m_colors[11] = 0.0f;
+    m_colors[9] = 1.0f;
+    m_colors[10] = 1.0f;
+    m_colors[11] = 1.0f;
 
     glClearColor(0, 0, 0, 1);
     v = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -65,8 +65,10 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+
     glClear(GL_COLOR_BUFFER_BIT);
 
+    //if(!prog->shaders().size()) return;
     if(!prog->bind())
     {
         std::string error_out;
@@ -74,17 +76,17 @@ void GLWidget::paintGL()
             error_out += "In fragment shader:\n" + f->log().toStdString() + "\n";
         if(!v->log().toStdString().empty())
         error_out += "In vertex shader:\n" + v->log().toStdString() + "\n";
-        if(prev_error != error_out)
+        if(prev_error != error_out && prev_error.size() != error_out.size())
         {
             prev_error = error_out;
             emit outputError(QString::fromStdString(error_out));
         }
         return;
     }
+    prev_error.clear();
     emit noError();
 
     QMatrix4x4 matrix;
-
     time+=.02f * speed;
 
     prog->setAttributeArray( m_posAttr, m_vertices.data(), 3);
@@ -142,13 +144,8 @@ void GLWidget::speedGL(int s) { speed = s; }
 
 GLWidget::~GLWidget()
 {
-    m_vertices.erase(m_vertices.begin(), m_vertices.end());
-    m_colors.erase(m_colors.begin(), m_colors.end());
-    m_resolution.erase(m_resolution.begin(), m_resolution.end());
     prog->removeAllShaders();
     delete prog;
     delete v;
     delete f;
-    v_str.clear();
-    f_str.clear();
 }
