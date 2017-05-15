@@ -21,7 +21,6 @@ public:
 private:
     Ui::IDE *ui;
     QTimer *timer;
-    QWindow *GLcontext;
     About *about;
 
 public slots:
