@@ -44,6 +44,7 @@ IDE::IDE(QWidget *parent) :
 
 IDE::~IDE()
 {
+    timer->stop();
     delete timer;
     delete about;
     delete ui;

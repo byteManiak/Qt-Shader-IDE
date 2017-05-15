@@ -2,13 +2,16 @@
 
 GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), time(0)
 {
+    setMouseTracking(true);
+
     v_str += "uniform mat4 matrix;\n"
     "attribute vec4 posAttr;\n"
     "attribute vec4 colAttr;\n"
     "varying vec4 col;\n";
 
     f_str += "uniform float time;\n"
-    "uniform vec2 resolution;\n";
+    "uniform vec2 resolution;\n"
+    "uniform vec2 mouse;\n";
 }
 
 void GLWidget::initializeGL()
@@ -99,6 +102,8 @@ void GLWidget::paintGL()
     glDrawArrays( GL_QUADS, 0, 4);
     prog->disableAttributeArray( m_colAttr );
 
+    prog->setUniformValue("mouse", QPointF(mousePos.x()/(float)m_resolution[0],
+                                           1.0f-mousePos.y()/(float)m_resolution[1]));
     prog->setUniformValue("time", time);
 
     prog->setUniformValueArray("resolution", m_resolution.data(), 1, 2);
@@ -148,4 +153,9 @@ GLWidget::~GLWidget()
     delete prog;
     delete v;
     delete f;
+}
+
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    mousePos = event->pos();
 }

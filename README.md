@@ -9,7 +9,7 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - [ ] UI cleanup.
 - [x] Implement ```time``` uniform.
 - [x] Implement ```resolution``` uniform.
-- [ ] Implement ```mouse``` uniform.
+- [x] Implement ```mouse``` uniform.
 - [ ] Textures in vertex shader.
 - [ ] ```Help``` section.
 - [ ] Text formatting features.

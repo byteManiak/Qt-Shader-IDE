@@ -5,6 +5,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
+#include <QMouseEvent>
 #include <iostream>
 #include <sstream>
 
@@ -36,6 +37,7 @@ private:
 
     QOpenGLShader *v, *f;
     QString v_str, f_str;
+    QPoint mousePos;
 
     std::string prev_error;
 
@@ -47,6 +49,7 @@ public slots:
     void stop();
     void toggle();
     void compile(QString, QString);
+    void mouseMoveEvent(QMouseEvent*);
 };
 
 #endif // GLWIDGET_H
