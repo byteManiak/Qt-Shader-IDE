@@ -1,5 +1,5 @@
-# Qt Fragment Shader IDE
-This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inherently, C++) and a bit of OpenGL, mostly for educational purposes.
+# Qt Shader IDE
+This is a GLSL shader IDE that I'm writing in Qt (and thus, inherently, C++) and a bit of OpenGL, mostly for educational purposes.
 
 ## To do
 - [ ] Add ability to manage .glsl files.
@@ -15,4 +15,4 @@ This is a simple GLSL fragment shader IDE that I'm writing in Qt (and thus, inhe
 - [ ] Text formatting features.
 - [x] Include all uniforms and attributes by default. (not visible to the user)
 
-Doesn't quite work on Windows yet. Need to do more debugging.
+Doesn't work properly on Windows yet. GL context is blank on most test machines. Need to do more debugging.

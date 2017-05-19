@@ -10,12 +10,15 @@ GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), time(0)
     "varying vec4 col;\n";
 
     f_str += "uniform float time;\n"
+    "uniform sampler2D tex;\n"
+    "varying vec4 col;\n"
     "uniform vec2 resolution;\n"
     "uniform vec2 mouse;\n";
 }
 
 void GLWidget::initializeGL()
 {
+    initializeOpenGLFunctions();
     prog = new QOpenGLShaderProgram(this);
     m_resolution.resize(2);
     m_resolution[0] = this->width();

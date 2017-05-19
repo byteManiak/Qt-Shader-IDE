@@ -5,11 +5,13 @@
 #include <QOpenGLWidget>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
+#include <QOpenGLFunctions>
 #include <QMouseEvent>
 #include <iostream>
 #include <sstream>
 
-class GLWidget : public QOpenGLWidget
+class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {    
     Q_OBJECT
 public:
@@ -33,7 +35,6 @@ private:
     std::vector<float> m_vertices;
     std::vector<float> m_colors;
     std::vector<float> m_resolution;
-
 
     QOpenGLShader *v, *f;
     QString v_str, f_str;
