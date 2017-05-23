@@ -8,7 +8,7 @@ GLToolBar::GLToolBar(QWidget *parent) : QToolBar(parent)
     speed_slider->setRange(0, 8);
     speed_slider->setValue(1);
 
-    addWidget(new QLabel("Context Speed:"));
+    addWidget(new QLabel("Context speed:"));
     addWidget(speed_slider);
     addSeparator();
 }

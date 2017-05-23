@@ -1,164 +1,123 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), speed(1), time(0)
+GLWidget::GLWidget(QWidget *parent = 0) : QOpenGLWidget(parent), time(0.0f), rotY(1.0f)
 {
-    setMouseTracking(true);
+    vert = "#version 330 core\n"
+        "layout(location = 0) in vec3 vertexPosition_modelspace;\n"
+        "uniform mat4 MVP;\n"
+        "out vec3 position;\n"
+        "void main() {\n"
+        "position = vertexPosition_modelspace;\n"
+        "gl_Position = MVP * vec4(vertexPosition_modelspace, 1);\n}\n";
 
-    v_str += "uniform mat4 matrix;\n"
-    "attribute vec4 posAttr;\n"
-    "attribute vec4 colAttr;\n"
-    "varying vec4 col;\n";
+    frag = "#version 330 core\n"
+        "in vec3 position;\n"
+        "out vec3 color;\n"
+        "uniform float time;\n"
+        "void main() {\n"
+        ""
+        "color = vec3(sin(mix(.5, 1, position.x)*30-time)*sin(mix(.5, 1, position.y)*30+time), "
+        "           sin(mix(.5, 1, position.y)*40+time)*sin(mix(.5, 1, position.x)*40+time),"
+        "           sin(mix(.5, 1, position.x)*50+time)*sin(mix(.5, 1, position.y)*50-time))"
+        "      * (.9-distance(position.xy, vec2(.5)));}\n";
 
-    f_str += "uniform float time;\n"
-    "uniform sampler2D tex;\n"
-    "varying vec4 col;\n"
-    "uniform vec2 resolution;\n"
-    "uniform vec2 mouse;\n";
+    MVP = new QMatrix4x4();
+ //   MVP->perspective(75.0f, width()/(float)height(), 0.0f, 100.0f);
+    MVP->rotate(180.0f, QVector3D(0.0f, 1.0f, 0.0f));
+    MVP->scale(1.0f);
 }
 
 void GLWidget::initializeGL()
 {
-    initializeOpenGLFunctions();
-    prog = new QOpenGLShaderProgram(this);
-    m_resolution.resize(2);
-    m_resolution[0] = this->width();
-    m_resolution[1] = this->height();
+    makeCurrent();
+    glewExperimental = GL_TRUE;
+    glewInit();
 
-    m_vertices.resize( 12 );
+    verts.push_back(-1.0f);
+    verts.push_back(-1.0f);
+    verts.push_back(0.0f);
+    verts.push_back(1.0f);
+    verts.push_back(-1.0f);
+    verts.push_back(0.0f);
+    verts.push_back(1.0f);
+    verts.push_back(1.0f);
+    verts.push_back(0.0f);
+    verts.push_back(-1.0f);
+    verts.push_back(1.0f);
+    verts.push_back(0.0f);
+    verts.push_back(-1.0f);
+    verts.push_back(-1.0f);
+    verts.push_back(0.0f);
 
-    m_vertices[0] = -2.0f;
-    m_vertices[1] = -2.0f;
-    m_vertices[2] = 0.0f;
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_DEPTH_CLAMP);
+    glDepthRange(0.001f, 200.0f);
 
-    m_vertices[3] = -2.0f;
-    m_vertices[4] = 2.0f;
-    m_vertices[5] = 0.0f;
+    GLuint vert_array_id;
+    glGenVertexArrays(1, &vert_array_id);
+    glBindVertexArray(vert_array_id);
 
-    m_vertices[6] = 2.0f;
-    m_vertices[7] = 2.0f;
-    m_vertices[8] = 0.0f;
+    glGenBuffers(1, &vert_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*verts.size(), verts.data(), GL_STATIC_DRAW);
 
-    m_vertices[9] = 2.0f;
-    m_vertices[10] = -2.0f;
-    m_vertices[11] = 0.0f;
-
-    m_colors.resize( 12 );
-
-    m_colors[0] = 1.0f;
-    m_colors[1] = 1.0f;
-    m_colors[2] = 1.0f;
-
-    m_colors[3] = 1.0f;
-    m_colors[4] = 1.0f;
-    m_colors[5] = 1.0f;
-
-    m_colors[6] = 1.0f;
-    m_colors[7] = 1.0f;
-    m_colors[8] = 1.0f;
-
-    m_colors[9] = 1.0f;
-    m_colors[10] = 1.0f;
-    m_colors[11] = 1.0f;
-
-    glClearColor(0, 0, 0, 1);
-    v = new QOpenGLShader(QOpenGLShader::Vertex);
-    f = new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!prog->link()) return;
-    m_posAttr = prog->attributeLocation("posAttr");
-    m_colAttr = prog->attributeLocation("colAttr");
-    m_matrixUniform = prog->uniformLocation("matrix");
+    compileShader(vert, frag);
 }
 
 void GLWidget::paintGL()
 {
+    glViewport(0, 0, width(), height());
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(current_shader);
 
-    if(!prog->shaders().size()) return;
-    if(!prog->bind())
-    {
-        std::string error_out;
-        if(!f->log().toStdString().empty())
-            error_out += "In fragment shader:\n" + f->log().toStdString() + "\n";
-        if(!v->log().toStdString().empty())
-        error_out += "In vertex shader:\n" + v->log().toStdString() + "\n";
-        if(prev_error != error_out && prev_error.size() != error_out.size())
-        {
-            prev_error = error_out;
-            emit outputError(QString::fromStdString(error_out));
-        }
-        return;
-    }
-    prev_error.clear();
-    emit noError();
+    time += 0.01f;
+    MVP->rotate(rotY, QVector3D(0.0f, 1.0f, 0.0f));
 
-    QMatrix4x4 matrix;
-    time+=.02f * speed;
+    glUniformMatrix4fv(glGetUniformLocation(current_shader, "MVP"), 1, GL_FALSE, MVP->data());
+    glUniform1f(glGetUniformLocation(current_shader, "time"), time);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    prog->setAttributeArray( m_posAttr, m_vertices.data(), 3);
-    prog->enableAttributeArray( m_posAttr );
-    glDrawArrays( GL_QUADS, 0, 4);
-    prog->disableAttributeArray( m_posAttr );
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size()/3);
 
-    prog->setAttributeArray( m_colAttr, m_colors.data(), 3);
-    prog->enableAttributeArray( m_colAttr );
-    glDrawArrays( GL_QUADS, 0, 4);
-    prog->disableAttributeArray( m_colAttr );
-
-    prog->setUniformValue("mouse", QPointF(mousePos.x()/(float)m_resolution[0],
-                                           1.0f-mousePos.y()/(float)m_resolution[1]));
-    prog->setUniformValue("time", time);
-
-    prog->setUniformValueArray("resolution", m_resolution.data(), 1, 2);
-
-    prog->setUniformValue(m_matrixUniform, matrix);
-
-    prog->release();
-
+    glDisableVertexAttribArray(0);
 }
 
-void GLWidget::reset() { time = 0; }
-
-void GLWidget::compile(QString v_src, QString f_src)
+void GLWidget::compileShader(std::string v, std::string f)
 {
-    QString v_strsrc(v_str);
-    v_strsrc += v_src;
-    prog->removeShader(v);
-    v->compileSourceCode(v_strsrc);
-    prog->addShader(v);
+    GLuint v_shader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint f_shader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    QString f_strsrc(f_str);
-    f_strsrc += f_src;
-    prog->removeShader(f);
-    f->compileSourceCode(f_strsrc);
-    prog->addShader(f);
+    const char *v_char = v.c_str();
+    const char *f_char = f.c_str();
+
+    std::cout << v_char << '\n' << f_char;
+    glShaderSource(v_shader, 1, &v_char, NULL);
+    glShaderSource(f_shader, 1, &f_char, NULL);
+
+    glCompileShader(v_shader);
+    glCompileShader(f_shader);
+
+    GLuint shader_program = glCreateProgram();
+
+    glAttachShader(shader_program, v_shader);
+    glAttachShader(shader_program, f_shader);
+    glLinkProgram(shader_program);
+
+    glDetachShader(shader_program, v_shader);
+    glDetachShader(shader_program, f_shader);
+
+    glDeleteShader(v_shader);
+    glDeleteShader(f_shader);
+
+    current_shader = shader_program;
 }
-
-void GLWidget::resizeGL()
-{
-    m_resolution[0] = this->width();
-    m_resolution[1] = this->height();
-}
-
-void GLWidget::stop() { prog->removeAllShaders(); }
-
-void GLWidget::toggle()
-{
-    if(isHidden()) show();
-    else close();
-}
-
-void GLWidget::speedGL(int s) { speed = s; }
 
 GLWidget::~GLWidget()
 {
-    prog->removeAllShaders();
-    delete prog;
-    delete v;
-    delete f;
-}
-
-void GLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    mousePos = event->pos();
+    delete MVP;
+    //delete &current_shader;
 }

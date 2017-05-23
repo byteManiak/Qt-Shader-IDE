@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QLabel>
 #include <QSlider>
+#include <QComboBox>
 
 class GLToolBar : public QToolBar
 {

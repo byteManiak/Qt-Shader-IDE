@@ -22,9 +22,6 @@ private:
     Ui::IDE *ui;
     QTimer *timer;
     About *about;
-
-public slots:
-    void compileShader();
 };
 
 #endif // IDE_H

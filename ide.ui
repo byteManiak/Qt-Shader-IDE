@@ -139,9 +139,10 @@
            <property name="plainText">
             <string>void main() 
 {
-	vec2 p = gl_FragCoord.xy/resolution;
-	vec3 col = vec3(sin(p.x*30.-time)*sin(p.y*30.+time), sin(p.y*40.+time)*sin(p.x*40.+time), sin(p.x*50.+time)*sin(p.y*50.-time)) * (.9-distance(p, vec2(.5)));
-	gl_FragColor = vec4(col, 1.0);
+        color = vec3(sin(mix(.5, 1, position.x)*30-time)*sin(mix(.5, 1, position.y)*30+time),
+                   sin(mix(.5, 1, position.y)*40+time)*sin(mix(.5, 1, position.x)*40+time),
+                   sin(mix(.5, 1, position.x)*50+time)*sin(mix(.5, 1, position.y)*50-time))
+              * (.9-distance(position.xy, vec2(.5)));
 }</string>
            </property>
           </widget>
@@ -156,8 +157,8 @@
            <property name="plainText">
             <string>void main() 
 {
-	col = colAttr;
-	gl_Position = matrix * posAttr;
+        position = vertexPosition_modelspace;
+        gl_Position = MVP * vec4(vertexPosition_modelspace, 1);
 }</string>
            </property>
           </widget>
@@ -195,7 +196,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
