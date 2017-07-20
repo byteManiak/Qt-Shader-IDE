@@ -31,7 +31,13 @@ private:
 
     void initializeGL();
     void paintGL();
+
+public slots:
     void compileShader(std::string, std::string);
+    void reset();
+
+signals:
+    void shaderError(QString);
 };
 
 #endif // GLWIDGET_H

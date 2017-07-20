@@ -22,6 +22,12 @@ private:
     Ui::IDE *ui;
     QTimer *timer;
     About *about;
+
+public slots:
+    void sendStrings();
+
+signals:
+    void strings(std::string, std::string);
 };
 
 #endif // IDE_H

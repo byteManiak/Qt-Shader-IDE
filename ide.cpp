@@ -24,16 +24,24 @@ IDE::IDE(QWidget *parent) :
     connect(ui->actionFragmentEditor, SIGNAL(triggered()), ui->fragPlainTextEdit, SLOT(toggle()));
     connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
     connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
+    connect(ui->actionExit, SIGNAL(triggered()), about, SLOT(close()));
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(sendStrings()));
+    connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
 
     /** CONTEXT SPECIFIC **/
 
-
+    connect(this, SIGNAL(strings(std::string,std::string)),
+            ui->openGLWidget, SLOT(compileShader(std::string,std::string)));
 
     /** ERROR OUTPUT **/
 
     ui->textBrowser->hide();
+    connect(ui->openGLWidget, SIGNAL(shaderError(QString)), ui->textBrowser, SLOT(setPlainText(QString)));
     connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
 }
+
+void IDE::sendStrings(){ emit strings( ui->vertPlainTextEdit->toPlainText().toStdString(),
+                                       ui->fragPlainTextEdit->toPlainText().toStdString() ); }
 
 IDE::~IDE()
 {
