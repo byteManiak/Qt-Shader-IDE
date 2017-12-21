@@ -196,7 +196,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -237,7 +237,6 @@
     <addaction name="actionVertexEditor"/>
     <addaction name="actionFragmentEditor"/>
     <addaction name="actionContext"/>
-    <addaction name="actionError_Checker"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>

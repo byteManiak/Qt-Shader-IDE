@@ -23,10 +23,12 @@ IDE::IDE(QWidget *parent) :
 
     connect(ui->actionFragmentEditor, SIGNAL(triggered()), ui->fragPlainTextEdit, SLOT(toggle()));
     connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
+	connect(ui->actionContext, SIGNAL(triggered()), ui->openGLWidget, SLOT(toggle()));
     connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
     connect(ui->actionExit, SIGNAL(triggered()), about, SLOT(close()));
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(sendStrings()));
     connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
+	connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(close()));
 
     /** CONTEXT SPECIFIC **/
 
@@ -40,8 +42,13 @@ IDE::IDE(QWidget *parent) :
     connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
 }
 
-void IDE::sendStrings(){ emit strings( ui->vertPlainTextEdit->toPlainText().toStdString(),
-                                       ui->fragPlainTextEdit->toPlainText().toStdString() ); }
+void IDE::sendStrings()
+{
+	ui->textBrowser->hide();
+	ui->openGLWidget->show();
+	emit strings( ui->vertPlainTextEdit->toPlainText().toStdString(),
+				  ui->fragPlainTextEdit->toPlainText().toStdString() );
+}
 
 IDE::~IDE()
 {

@@ -24,8 +24,6 @@ private:
     std::vector<GLfloat> verts;
     GLuint vert_buffer;
 
-   // std::vector< std::vector<QVector3D*> >lines;
-
     QMatrix4x4 *MVP;
     GLfloat rotY;
 
@@ -35,6 +33,7 @@ private:
 public slots:
     void compileShader(std::string, std::string);
     void reset();
+	void toggle();
 
 signals:
     void shaderError(QString);

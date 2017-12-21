@@ -1,6 +1,6 @@
 #include "glwidget.h"
 
-GLWidget::GLWidget(QWidget *parent = 0) : QOpenGLWidget(parent), time(0.0f), rotY(1.0f)
+GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), time(0.0f), rotY(1.0f)
 {
     vert = "#version 330 core\n"
         "layout(location = 0) in vec3 vertexPosition_modelspace;\n"
@@ -61,8 +61,7 @@ void GLWidget::paintGL()
 
     glUseProgram(current_shader);
 
-    time += 0.01f;
-    MVP->rotate(rotY, QVector3D(0.0f, 1.0f, 0.0f));
+	time += 0.01f;
 
     glUniformMatrix4fv(glGetUniformLocation(current_shader, "MVP"), 1, GL_FALSE, MVP->data());
     glUniform1f(glGetUniformLocation(current_shader, "time"), time);
@@ -143,10 +142,9 @@ void GLWidget::compileShader(std::string v, std::string f)
     current_shader = shader_program;
 }
 
-void GLWidget::reset()
-{
-    time = 0;
-}
+void GLWidget::reset() { time = 0; }
+
+void GLWidget::toggle() { if(isHidden()) show(); else hide(); }
 
 GLWidget::~GLWidget()
 {
