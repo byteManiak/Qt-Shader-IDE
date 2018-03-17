@@ -12,8 +12,7 @@ class GLToolBar : public QToolBar
     Q_OBJECT
 public:
     explicit GLToolBar(QWidget *parent = 0);
-    QSlider *speed_slider;
-    ~GLToolBar() { delete speed_slider; }
+    ~GLToolBar() {}
 };
 
 #endif // GLTOOLBAR_H

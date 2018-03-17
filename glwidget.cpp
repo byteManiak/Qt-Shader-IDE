@@ -8,6 +8,7 @@ GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), time(0.0f), rotY(1.
         "out vec3 position;\n";
 
     frag = "#version 330 core\n"
+        "uniform sampler2D tex;\n"
         "in vec3 position;\n"
         "out vec3 color;\n"
         "uniform float time;\n"
@@ -52,6 +53,10 @@ void GLWidget::initializeGL()
     glGenBuffers(1, &vert_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*verts.size(), verts.data(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 void GLWidget::paintGL()
@@ -68,8 +73,6 @@ void GLWidget::paintGL()
     glUniform2f(glGetUniformLocation(current_shader, "resolution"), this->width(), this->height());
 
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vert_buffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size()/3);
 
