@@ -205,7 +205,6 @@
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSave_as"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>

@@ -1,9 +1,12 @@
 #ifndef IDE_H
 #define IDE_H
 
+#include <sstream>
 #include <QWindow>
 #include <QMainWindow>
 #include <QTimer>
+#include <QFileDialog>
+#include <QStandardPaths>
 #include "about.h"
 
 namespace Ui {
@@ -22,8 +25,11 @@ private:
     Ui::IDE *ui;
     QTimer *timer;
     About *about;
+    QString currentFile;
 
 public slots:
+    void open();
+    void save();
     void sendStrings();
 
 signals:
