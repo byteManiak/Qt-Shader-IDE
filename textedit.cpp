@@ -3,7 +3,7 @@
 TextEdit::TextEdit(QWidget *parent) : QPlainTextEdit(parent)
 {
     QFontMetrics f(font());
-    setTabStopDistance(10*f.width(' '));
+    setTabStopDistance(4*f.width('a'));
 }
 
 void TextEdit::toggle()

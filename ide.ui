@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Qt GLSL Fragment Shader IDE</string>
+   <string>Qt GLSL Shader IDE</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -139,10 +139,10 @@
            <property name="plainText">
             <string>void main() 
 {
-        color = vec3(sin(mix(.5, 1, position.x)*30-time)*sin(mix(.5, 1, position.y)*30+time),
-                   sin(mix(.5, 1, position.y)*40+time)*sin(mix(.5, 1, position.x)*40+time),
-                   sin(mix(.5, 1, position.x)*50+time)*sin(mix(.5, 1, position.y)*50-time))
-              * (.9-distance(position.xy, vec2(.5)));
+	color = vec3(sin(mix(.5, 1, position.x)*30-time)*sin(mix(.5, 1, position.y)*30+time),
+					sin(mix(.5, 1, position.y)*40+time)*sin(mix(.5, 1, position.x)*40+time),
+					sin(mix(.5, 1, position.x)*50+time)*sin(mix(.5, 1, position.y)*50-time))
+					* (.9-distance(position.xy, vec2(.5)));
 }</string>
            </property>
           </widget>
@@ -157,8 +157,8 @@
            <property name="plainText">
             <string>void main() 
 {
-        position = vertexPosition_modelspace;
-        gl_Position = MVP * vec4(vertexPosition_modelspace, 1);
+	position = vertexPosition_modelspace; // passed to fragment shader
+	gl_Position =  vec4(vertexPosition_modelspace, 1); // passed to geometry shader
 }</string>
            </property>
           </widget>
@@ -359,17 +359,6 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
-   </property>
-  </action>
-  <action name="actionError_Checker">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Error Checker</string>
-   </property>
-   <property name="shortcut">
-    <string>F8</string>
    </property>
   </action>
   <action name="actionHow_to">

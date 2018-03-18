@@ -6,6 +6,7 @@
 #include <QMatrix4x4>
 #include <GL/glew.h>
 #include <QOpenGLWidget>
+#include <QTime>
 
 class GLWidget : public QOpenGLWidget
 {
@@ -23,9 +24,6 @@ private:
 
     std::vector<GLfloat> verts;
     GLuint vert_buffer;
-
-    QMatrix4x4 *MVP;
-    GLfloat rotY;
 
     void initializeGL();
     void paintGL();
