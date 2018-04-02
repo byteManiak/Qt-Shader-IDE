@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include "glwidget.h"
 #include "about.h"
 
 namespace Ui {
@@ -26,6 +27,7 @@ private:
     QTimer *timer;
     About *about;
     QString currentFile;
+	GLWidget *openGLWidget;
 
 public slots:
     void open();

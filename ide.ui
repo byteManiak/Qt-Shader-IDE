@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Qt GLSL Shader IDE</string>
+   <string>Code Editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -87,26 +87,6 @@
           <property name="childrenCollapsible">
            <bool>false</bool>
           </property>
-          <widget class="GLWidget" name="openGLWidget">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="baseSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
           <widget class="TextEdit" name="fragPlainTextEdit">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -137,7 +117,13 @@
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
            <property name="plainText">
-            <string>void main() 
+            <string>uniform sampler2D tex;
+in vec3 position;
+out vec3 color;
+uniform float time;
+uniform vec2 resolution;
+
+void main() 
 {
 	color = vec3(sin(mix(.5, 1, position.x)*30-time)*sin(mix(.5, 1, position.y)*30+time),
 					sin(mix(.5, 1, position.y)*40+time)*sin(mix(.5, 1, position.x)*40+time),
@@ -155,10 +141,14 @@
             </font>
            </property>
            <property name="plainText">
-            <string>void main() 
+            <string>uniform float time;
+layout(location = 0) in vec3 vertexPosition;
+out vec3 position;
+
+void main() 
 {
-	position = vertexPosition_modelspace; // passed to fragment shader
-	gl_Position =  vec4(vertexPosition_modelspace, 1); // passed to geometry shader
+	position = vertexPosition; // passed to fragment shader
+	gl_Position =  vec4(vertexPosition, 1); // passed to geometry shader
 }</string>
            </property>
           </widget>
@@ -236,7 +226,6 @@
     </property>
     <addaction name="actionVertexEditor"/>
     <addaction name="actionFragmentEditor"/>
-    <addaction name="actionContext"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -371,11 +360,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>GLWidget</class>
-   <extends>QOpenGLWidget</extends>
-   <header>glwidget.h</header>
-  </customwidget>
   <customwidget>
    <class>GLToolBar</class>
    <extends>QToolBar</extends>

@@ -2,17 +2,10 @@
 
 GLWidget::GLWidget(QWidget *parent) : QOpenGLWidget(parent), time(0.0f)
 {
-    vert = "#version 330 core\n"
-        "uniform float time;\n"
-        "layout(location = 0) in vec3 vertexPosition_modelspace;\n"
-        "out vec3 position;\n";
+	setWindowTitle("GL Context");
+	vert = "#version 330 core\n";
 
-    frag = "#version 330 core\n"
-        "uniform sampler2D tex;\n"
-        "in vec3 position;\n"
-        "out vec3 color;\n"
-        "uniform float time;\n"
-        "uniform vec2 resolution;\n";
+	frag = "#version 330 core\n";
 
 }
 
@@ -99,6 +92,7 @@ void GLWidget::compileShader(std::string v, std::string f)
 
     if(v_shader_status == GL_FALSE) // if shader didn't compile, output error
     {
+		hide();
         GLint v_maxLength;
         glGetShaderiv(v_shader, GL_INFO_LOG_LENGTH, &v_maxLength);
         // get length of error text
@@ -121,7 +115,8 @@ void GLWidget::compileShader(std::string v, std::string f)
     glGetShaderiv(f_shader, GL_COMPILE_STATUS, &f_shader_status);
 
     if(f_shader_status == GL_FALSE)
-    {
+	{
+		hide();
         GLint f_maxLength;
         glGetShaderiv(f_shader, GL_INFO_LOG_LENGTH, &f_maxLength);
 
@@ -147,12 +142,10 @@ void GLWidget::compileShader(std::string v, std::string f)
     // old shaders are unneeded now so delete them
 
     current_shader = shader_program;
-    // push shader to context
+	// push shader to context
 }
 
 void GLWidget::reset() { time = 0; }
-
-void GLWidget::toggle() { if(isHidden()) show(); else hide(); }
 
 GLWidget::~GLWidget()
 {

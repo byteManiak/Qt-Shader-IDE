@@ -12,7 +12,7 @@ class GLWidget : public QOpenGLWidget
 {
     Q_OBJECT
 public:
-    explicit GLWidget(QWidget*);
+	explicit GLWidget(QWidget *parent = nullptr);
     ~GLWidget();
 
 private:
@@ -30,8 +30,7 @@ private:
 
 public slots:
     void compileShader(std::string, std::string);
-    void reset();
-	void toggle();
+	void reset();
 
 signals:
     void shaderError(QString);

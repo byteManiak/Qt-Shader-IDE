@@ -13,44 +13,45 @@ IDE::IDE(QWidget *parent) :
     ui->splitter_2->setStretchFactor(0, 2);
     ui->splitter_2->setStretchFactor(1, 1);
 
+	openGLWidget = new GLWidget();
+
 	currentFile = QStandardPaths::locate(QStandardPaths::HomeLocation, QString(),
 											  QStandardPaths::LocateDirectory);
 
     timer = new QTimer(this);
     timer->start();
 
-    connect(timer, SIGNAL(timeout()), ui->openGLWidget, SLOT(update()));
+	connect(timer, SIGNAL(timeout()), openGLWidget, SLOT(update()));
 
     about = new About();
 
     /** MENU ACTIONS **/
 
     connect(ui->actionFragmentEditor, SIGNAL(triggered()), ui->fragPlainTextEdit, SLOT(toggle()));
-    connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
-	connect(ui->actionContext, SIGNAL(triggered()), ui->openGLWidget, SLOT(toggle()));
+	connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
     connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
     connect(ui->actionExit, SIGNAL(triggered()), about, SLOT(close()));
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(sendStrings()));
-    connect(ui->actionReset, SIGNAL(triggered()), ui->openGLWidget, SLOT(reset()));
-	connect(ui->actionBreak, SIGNAL(triggered()), ui->openGLWidget, SLOT(close()));
+	connect(ui->actionReset, SIGNAL(triggered()), openGLWidget, SLOT(reset()));
+	connect(ui->actionBreak, SIGNAL(triggered()), openGLWidget, SLOT(close()));
 	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(open()));
 	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(save()));
 
     /** CONTEXT SPECIFIC **/
 
     connect(this, SIGNAL(strings(std::string,std::string)),
-            ui->openGLWidget, SLOT(compileShader(std::string,std::string)));
+			openGLWidget, SLOT(compileShader(std::string,std::string)));
 
     /** ERROR OUTPUT **/
 
     ui->textBrowser->hide();
-    connect(ui->openGLWidget, SIGNAL(shaderError(QString)), ui->textBrowser, SLOT(setPlainText(QString)));
+	connect(openGLWidget, SIGNAL(shaderError(QString)), ui->textBrowser, SLOT(setPlainText(QString)));
     connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
 }
 
 void IDE::open()
 {
-	ui->openGLWidget->close();
+	openGLWidget->close();
 	// not closing the GL widget causes the file dialog to be invisible - at least on my machine
 
 	currentFile = QFileDialog::getOpenFileName(this, "Open GLSL file", currentFile,
@@ -95,12 +96,11 @@ void IDE::open()
 		}
 		file.close(); // finally, close the file
 	}
-	std::cout << "Here we are" << std::endl;
 }
 
 void IDE::save()
 {
-	ui->openGLWidget->close();
+	openGLWidget->close();
 	currentFile = QFileDialog::getSaveFileName(this, "Open GLSL file", currentFile,
 										"GLSL files (*.glsl);;Any files(*.*)");
 	QFile file(currentFile);
@@ -121,7 +121,7 @@ void IDE::save()
 void IDE::sendStrings()
 {
 	ui->textBrowser->hide();
-	ui->openGLWidget->show();
+	openGLWidget->show();
 	emit strings( ui->vertPlainTextEdit->toPlainText().toStdString(),
 				  ui->fragPlainTextEdit->toPlainText().toStdString() );
 }
