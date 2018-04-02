@@ -10,10 +10,10 @@ About::About(QWidget *parent) : QWidget(parent)
     layout->addWidget(new QLabel("This IDE is licensed under the LGPLv3 license:"));
 
     license = new QTextBrowser();
-    f.open("LICENSE");
-    std::string content( (std::istreambuf_iterator<char>(f) ),
-                           (std::istreambuf_iterator<char>()    ) );
+	licenseFile.open("LICENSE");
+	std::string content( (std::istreambuf_iterator<char>(licenseFile)),
+						   (std::istreambuf_iterator<char>()) );
     license->setText(QString::fromStdString(content));
-    f.close();
+	licenseFile.close();
     layout->addWidget(license);
 }

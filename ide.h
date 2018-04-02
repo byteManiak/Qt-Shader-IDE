@@ -32,10 +32,14 @@ private:
 public slots:
     void open();
     void save();
-    void sendStrings();
+	void sendStrings();
+	void importTexture();
+	void importModel();
 
 signals:
     void strings(std::string, std::string);
+	void pathToTexture(QString);
+	void pathToModel(QString);
 };
 
 #endif // IDE_H

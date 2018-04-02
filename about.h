@@ -17,7 +17,7 @@ public:
 private:
     QLayout *layout;
     QTextBrowser *license;
-    std::ifstream f;
+	std::ifstream licenseFile;
 };
 
 #endif // ABOUT_H

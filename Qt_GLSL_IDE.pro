@@ -6,6 +6,7 @@
 
 QT       += core gui
 LIBS += -lGLEW
+
 win32 {
     LIBS += -lOpengl32
 }
@@ -31,14 +32,12 @@ SOURCES += main.cpp\
         ide.cpp \
     glwidget.cpp \
     textedit.cpp \
-    gltoolbar.cpp \
     about.cpp \
     glslsyntax.cpp
 
 HEADERS  += ide.h \
     glwidget.h \
     textedit.h \
-    gltoolbar.h \
     about.h \
     glslsyntax.h
 

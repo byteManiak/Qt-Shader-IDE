@@ -6,14 +6,13 @@ This is a GLSL shader IDE that I'm writing in Qt (and thus, inherently, C++) and
 - [ ] Add ability to change fonts.
 - [ ] Syntax highlighting.
 - [x] Basic error checking.
-- [ ] UI cleanup.
+- [x] UI cleanup.
 - [x] Implement ```time``` uniform.
 - [x] Implement ```resolution``` uniform.
 - [ ] Implement ```mouse``` uniform.
-- [ ] Textures in vertex shader.
+- [x] Textures in fragment shader.
 - [ ] ```Help``` section.
 - [ ] Text formatting features.
-- [x] Include all uniforms and attributes by default. (not visible to the user)
 
 ~~Doesn't work properly on Windows yet. GL context is blank on most test machines. Need to do more debugging.~~
 With the new GL context code, the project works mostly fine on Windows.

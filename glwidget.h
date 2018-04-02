@@ -25,12 +25,16 @@ private:
     std::vector<GLfloat> verts;
     GLuint vert_buffer;
 
+	GLuint texture;
+
     void initializeGL();
     void paintGL();
 
 public slots:
     void compileShader(std::string, std::string);
 	void reset();
+	void loadTexture(QString);
+	void loadModel();
 
 signals:
     void shaderError(QString);

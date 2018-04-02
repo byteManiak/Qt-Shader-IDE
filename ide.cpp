@@ -7,21 +7,23 @@ IDE::IDE(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->splitter->setStretchFactor(0,1);
-    ui->splitter->setStretchFactor(1,1);
-    ui->splitter->setStretchFactor(2,1);
+	ui->splitter->setStretchFactor(1,1);
 
-    ui->splitter_2->setStretchFactor(0, 2);
+	ui->splitter_2->setStretchFactor(0, 1);
     ui->splitter_2->setStretchFactor(1, 1);
 
 	openGLWidget = new GLWidget();
 
 	currentFile = QStandardPaths::locate(QStandardPaths::HomeLocation, QString(),
 											  QStandardPaths::LocateDirectory);
+	// set current path to file to the home directory - makes browsing files easier
 
     timer = new QTimer(this);
     timer->start();
+	// make a timer for the GL widget
 
 	connect(timer, SIGNAL(timeout()), openGLWidget, SLOT(update()));
+	// GL widget updates every tick
 
     about = new About();
 
@@ -29,24 +31,52 @@ IDE::IDE(QWidget *parent) :
 
     connect(ui->actionFragmentEditor, SIGNAL(triggered()), ui->fragPlainTextEdit, SLOT(toggle()));
 	connect(ui->actionVertexEditor, SIGNAL(triggered()), ui->vertPlainTextEdit, SLOT(toggle()));
+	// shows either editor pane when checking their corresponding menu option
+
     connect(ui->actionAbout, SIGNAL(triggered()), about, SLOT(show()));
+	// opens the about and license dialog
+
     connect(ui->actionExit, SIGNAL(triggered()), about, SLOT(close()));
+	// closes the program
+
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(sendStrings()));
+	// makes the main window send shader code to the GL widget
+
 	connect(ui->actionReset, SIGNAL(triggered()), openGLWidget, SLOT(reset()));
+	// resets the time in the GL widget
+
 	connect(ui->actionBreak, SIGNAL(triggered()), openGLWidget, SLOT(close()));
+	// closes the GL widget
+
 	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(open()));
+	// opens a .glsl file
+
 	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(save()));
+	// saves a .glsl file
+
+	connect(ui->actionImport_texture, SIGNAL(triggered()), this, SLOT(importTexture()));
+	// imports a texture
+
+	connect(ui->actionImport_model, SIGNAL(triggered()), this, SLOT(importModel()));
+	// imports a model
 
     /** CONTEXT SPECIFIC **/
 
     connect(this, SIGNAL(strings(std::string,std::string)),
 			openGLWidget, SLOT(compileShader(std::string,std::string)));
+	// directs the GL widget to compile the shader code
+
+	connect(this, SIGNAL(pathToTexture(QString)), openGLWidget, SLOT(loadTexture(QString)));
+	// sends path to texture file to the GL widget
 
     /** ERROR OUTPUT **/
 
-    ui->textBrowser->hide();
+	ui->textBrowser->hide();	// don't show the error pane by default
 	connect(openGLWidget, SIGNAL(shaderError(QString)), ui->textBrowser, SLOT(setPlainText(QString)));
+	// sets text in the error pane if there was an error while compiling the shaders
+
     connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
+	// shows the error pane when an error occurs
 }
 
 void IDE::open()
@@ -124,6 +154,27 @@ void IDE::sendStrings()
 	openGLWidget->show();
 	emit strings( ui->vertPlainTextEdit->toPlainText().toStdString(),
 				  ui->fragPlainTextEdit->toPlainText().toStdString() );
+}
+
+void IDE::importTexture()
+{
+	QString texturePath = QFileDialog::getOpenFileName(this, "Import texture", "",
+													   "BMP files (*.bmp);;"
+														"GIF files (*.gif);;"
+														"JPEG files (*.jpg, *.jpeg);;"
+														"PNG files (*.png);;"
+														"XBM files (*.xbm);;"
+														"XPM files (*.xpm);;"
+													   "All files (*.*)");
+	emit pathToTexture(texturePath);	// forward the file path to the GL widget
+}
+
+void IDE::importModel()
+{
+	QString modelPath = QFileDialog::getOpenFileName(this, "Import model", "",
+													   "OBJ files (*.obj);;"
+													   "All files (*.*)");
+	emit pathToModel(modelPath);	// forward the file path to the GL widget
 }
 
 IDE::~IDE()
