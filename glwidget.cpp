@@ -52,7 +52,7 @@ void GLWidget::loadTexture(QString path)
 
 	glBindTexture(GL_TEXTURE_2D, texture);	// bind the GL texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
-				 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());	// write image to GL texture
+				 0, GL_BGRA, GL_UNSIGNED_BYTE, image.bits());	// write image to GL texture
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
