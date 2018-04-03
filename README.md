@@ -4,7 +4,7 @@ This is a GLSL shader IDE that I'm writing in Qt (and thus, inherently, C++) and
 ## To do
 - [x] Add ability to manage .glsl files.
 - [ ] Add ability to change fonts.
-- [ ] Syntax highlighting.
+- [x] Syntax highlighting.
 - [x] Basic error checking.
 - [x] UI cleanup.
 - [x] Implement ```time``` uniform.

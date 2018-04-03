@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include "glwidget.h"
+#include "glslsyntax.h"
 #include "about.h"
 
 namespace Ui {
@@ -28,6 +29,7 @@ private:
     About *about;
     QString currentFile;
 	GLWidget *openGLWidget;
+	GLSLSyntax *vertexSyntaxHighlighter, *fragmentSyntaxHighlighter;
 
 public slots:
     void open();

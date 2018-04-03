@@ -51,8 +51,9 @@ void GLWidget::loadTexture(QString path)
 {
 	QImage image = QImage(path);	// load image from path
 	image.convertToFormat(QImage::Format_RGBA8888, Qt::AutoColor);	// convert image to RGBA
-	image = image.mirrored();	// flip it (needed?)
+	image = image.mirrored();	// flip it
 
+	show();	// make context visible to be able to load the texture
 	glBindTexture(GL_TEXTURE_2D, texture);	// bind the GL texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(),
 				 0, GL_BGRA, GL_UNSIGNED_BYTE, image.bits());	// write image to GL texture
@@ -62,6 +63,7 @@ void GLWidget::loadTexture(QString path)
 	// set texture filtering - the texture doesn't render without these 2 lines
 
 	glBindTexture(GL_TEXTURE_2D, 0);	// unbind the GL texture
+	close();	// close the context as it is no longer needed
 }
 
 void GLWidget::loadModel()

@@ -77,6 +77,9 @@ IDE::IDE(QWidget *parent) :
 
     connect(ui->textBrowser, SIGNAL(textChanged()), ui->textBrowser, SLOT(show()));
 	// shows the error pane when an error occurs
+
+	vertexSyntaxHighlighter = new GLSLSyntax(ui->vertPlainTextEdit->document());
+	fragmentSyntaxHighlighter = new GLSLSyntax(ui->fragPlainTextEdit->document());
 }
 
 void IDE::open()

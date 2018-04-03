@@ -1,6 +1,6 @@
 #include "glslsyntax.h"
 
-GLSLSyntax::GLSLSyntax(QWidget *parent) : QSyntaxHighlighter(parent)
+GLSLSyntax::GLSLSyntax(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
 	keywordFormat.setForeground(Qt::darkBlue);
 	keywordFormat.setFontWeight(QFont::Bold);
@@ -38,4 +38,80 @@ GLSLSyntax::GLSLSyntax(QWidget *parent) : QSyntaxHighlighter(parent)
 					<< "\\busamplerBuffer\\b" << "\\bsampler2DMS\\b" << "\\bisampler2DMS\\b"
 					<< "\\busampler2DMS\\b" << "\\bsampler2DMSArray\\b" << "\\bisampler2DMSArray\\b"
 					<< "\\busampler2DMSArray\\b" << "\\bstruct\\b";
+
+	functionFormat.setForeground(Qt::darkMagenta);
+	functionFormat.setFontWeight(QFont::Bold);
+	QStringList functionPatterns;
+	functionPatterns << "\\bradians\\b" << "\\bdegrees\\b" << "\\bsin\\b"
+					 << "\\bcos\\b" << "\\btan\\b" << "\\basin\\b"
+					 << "\\bacos\\b" << "\\batan\\b" << "\\bsinh\\b"
+					 << "\\bcosh\\b" << "\\btanh\\b" << "\\basinh\\b"
+					 << "\\bacosh\\b" << "\\batanh\\b" << "\\bpow\\b"
+					 << "\\bexp\\b" << "\\blog\\b" << "\\bexp2\\b"
+					 << "\\blog2\\b" << "\\bsqrt\\b" << "\\binversesqrt\\b"
+					 << "\\babs\\b" << "\\bsign\\b" << "\\bfloor\\b"
+					 << "\\btrunc\\b" << "\\bround\\b" << "\\broundEven\\b"
+					 << "\\bceil\\b" << "\\bfract\\b" << "\\bmod\\b"
+					 << "\\bmodf\\b" << "\\bmin\\b" << "\\bmax\\b"
+					 << "\\bclamp\\b" << "\\bmix\\b" << "\\bstep\\b"
+					 << "\\bsmoothstep\\b" << "\\bisnan\\b" << "\\bisinf\\b"
+					 << "\\bfloatBitsToInt\\b" << "\\bfloatBitsToUint\\b" << "\\bintBitsToFloat\\b"
+					 << "\\buintBitsToFloat\\b" << "\\blength\\b" << "\\bdistance\\b"
+					 << "\\bdot\\b" << "\\bcross\\b" << "\\bnormalize\\b"
+					 << "\\bftransform\\b" << "\\bfaceforward\\b" << "\\breflect\\b"
+					 << "\\brefract\\b" << "\\bmatrixCompMult\\b" << "\\bouterProduct\\b"
+					 << "\\btranspose\\b" << "\\bdeterminant\\b" << "\\binverse\\b"
+					 << "\\blessThan\\b" << "\\blessThanEqual\\b" << "\\bgreaterThan\\b"
+					 << "\\bgreaterThanEqual\\b" << "\\bequal\\b" << "\\bnotEqual\\b"
+					 << "\\bany\\b" << "\\ball\\b" << "\\bnot\\b"
+					 << "\\btextureSize\\b" << "\\btexture\\b" << "\\btextureProj\\b"
+					 << "\\btextureLod\\b" << "\\btextureOffset\\b" << "\\btexelFetch\\b"
+					 << "\\btexelFetchOffset\\b" << "\\btextureProjOffset\\b" << "\\btextureLodOffset\\b"
+					 << "\\btextureProjLod\\b" << "\\btextureProjLodOffset\\b" << "\\btextureGrad\\b"
+					 << "\\btextureGradOffset\\b" << "\\btextureProjGrad\\b" << "\\btextureProjGradOffset\\b"
+					 << "\\btexture1D\\b" << "\\btexture1DLod\\b" << "\\btexture1DProj\\b"
+					 << "\\btexture1DProjLod\\b" << "\\btexture2D\\b" << "\\btexture2DLod\\b"
+					 << "\\btexture2DProj\\b" << "\\btexture2DProjLod\\b" << "\\btexture3D\\b"
+					 << "\\btexture3DLod\\b" << "\\btexture3DProj\\b" << "\\btexture3DProjLod\\b"
+					 << "\\btextureCube\\b" << "\\btextureCubeLod\\b"
+					 << "\\bshadow1D\\b" << "\\bshadow1DLod\\b" << "\\bshadow1DProj\\b"
+					 << "\\bshadow1DProjLod\\b" << "\\bshadow2D\\b" << "\\bshadow2DLod\\b"
+					 << "\\bshadow2DProj\\b" << "\\bshadow2DProjLod\\b" << "\\bdFdx\\b"
+					 << "\\bdFdy\\b" << "\\bfwidth\\b" << "\\bnoise1\\b"
+					 << "\\bnoise2\\b"<< "\\bnoise3\\b" << "\\bnoise4\\b";
+
+	foreach(const QString &pattern, keywordPatterns)
+	{
+		Rule tempRule;
+		tempRule.wordFormat = keywordFormat;
+		tempRule.regexp = QRegularExpression(pattern);
+		keywordRules.append(tempRule);
+	}
+
+	foreach(const QString &pattern, functionPatterns)
+	{
+		Rule tempRule;
+		tempRule.wordFormat = functionFormat;
+		tempRule.regexp = QRegularExpression(pattern);
+		functionRules.append(tempRule);
+	}
+}
+
+void GLSLSyntax::highlightBlock(const QString &text)
+{
+	foreach (const Rule &rule, keywordRules) {
+			QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
+			while (matchIterator.hasNext()) {
+				QRegularExpressionMatch match = matchIterator.next();
+				setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
+			}
+		}
+
+	foreach (const Rule &rule, functionRules) {
+			QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
+			while (matchIterator.hasNext()) {
+				QRegularExpressionMatch match = matchIterator.next();
+				setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
+			}
+		}
 }
