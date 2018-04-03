@@ -142,7 +142,7 @@ layout(location = 0) in vec3 vertexPosition; // model-space position of vertex
 
 void main() 
 {
-	gl_Position =  vec4(vertexPosition, 1); // passed to geometry shader
+	gl_Position = vec4(vertexPosition, 1); // passed to geometry shader
 }</string>
            </property>
           </widget>
