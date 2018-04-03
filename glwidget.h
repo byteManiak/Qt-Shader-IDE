@@ -16,15 +16,10 @@ public:
     ~GLWidget();
 
 private:
-    std::string vert, frag;
-
     GLuint current_shader;
-
     GLfloat time;
-
     std::vector<GLfloat> verts;
     GLuint vert_buffer;
-
 	GLuint texture;
 
     void initializeGL();

@@ -42,6 +42,9 @@ void GLWidget::initializeGL()
 
 	glGenTextures(1, &texture);
 	// create a texture to be used in the context if needed
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void GLWidget::loadTexture(QString path)

@@ -158,6 +158,7 @@ void IDE::sendStrings()
 
 void IDE::importTexture()
 {
+	openGLWidget->close();
 	QString texturePath = QFileDialog::getOpenFileName(this, "Import texture", "",
 													   "BMP files (*.bmp);;"
 														"GIF files (*.gif);;"
@@ -171,6 +172,7 @@ void IDE::importTexture()
 
 void IDE::importModel()
 {
+	openGLWidget->close();
 	QString modelPath = QFileDialog::getOpenFileName(this, "Import model", "",
 													   "OBJ files (*.obj);;"
 													   "All files (*.*)");
