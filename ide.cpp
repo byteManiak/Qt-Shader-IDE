@@ -185,6 +185,8 @@ void IDE::importModel()
 IDE::~IDE()
 {
 	timer->stop();
+	delete vertexSyntaxHighlighter;
+	delete fragmentSyntaxHighlighter;
     delete timer;
     delete about;
     delete ui;

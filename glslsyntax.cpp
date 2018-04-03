@@ -2,8 +2,8 @@
 
 GLSLSyntax::GLSLSyntax(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
-	keywordFormat.setForeground(Qt::darkBlue);
-	keywordFormat.setFontWeight(QFont::Bold);
+	keywordFormat.setForeground(Qt::darkBlue);	// color of text to be highlighted
+	keywordFormat.setFontWeight(QFont::Bold);	// font weight of text to be highlighted
 	QStringList keywordPatterns;
 	keywordPatterns << "\\battribute\\b" << "\\bconst\\b" << "\\buniform\\b"
 					<< "\\bvarying\\b" << "\\blayout\\b" << "\\bcentroid\\b"
@@ -38,7 +38,9 @@ GLSLSyntax::GLSLSyntax(QTextDocument *parent) : QSyntaxHighlighter(parent)
 					<< "\\busamplerBuffer\\b" << "\\bsampler2DMS\\b" << "\\bisampler2DMS\\b"
 					<< "\\busampler2DMS\\b" << "\\bsampler2DMSArray\\b" << "\\bisampler2DMSArray\\b"
 					<< "\\busampler2DMSArray\\b" << "\\bstruct\\b";
+	// list of keywords to be highlighted and the way in which to highlight them (bold in this case)
 
+	// rinse and repeat:
 	functionFormat.setForeground(Qt::darkMagenta);
 	functionFormat.setFontWeight(QFont::Bold);
 	QStringList functionPatterns;
@@ -83,9 +85,9 @@ GLSLSyntax::GLSLSyntax(QTextDocument *parent) : QSyntaxHighlighter(parent)
 	foreach(const QString &pattern, keywordPatterns)
 	{
 		Rule tempRule;
-		tempRule.wordFormat = keywordFormat;
-		tempRule.regexp = QRegularExpression(pattern);
-		keywordRules.append(tempRule);
+		tempRule.wordFormat = keywordFormat;	// make format for highlighting
+		tempRule.regexp = QRegularExpression(pattern);	// make regular expressions from list above
+		keywordRules.append(tempRule);	// add rule to the vector of rules
 	}
 
 	foreach(const QString &pattern, functionPatterns)
@@ -99,19 +101,26 @@ GLSLSyntax::GLSLSyntax(QTextDocument *parent) : QSyntaxHighlighter(parent)
 
 void GLSLSyntax::highlightBlock(const QString &text)
 {
-	foreach (const Rule &rule, keywordRules) {
-			QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
-			while (matchIterator.hasNext()) {
-				QRegularExpressionMatch match = matchIterator.next();
-				setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
-			}
-		}
+	foreach (const Rule &rule, keywordRules)
+	{
+		QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
+		// set regular expression to look for in text
 
-	foreach (const Rule &rule, functionRules) {
-			QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
-			while (matchIterator.hasNext()) {
-				QRegularExpressionMatch match = matchIterator.next();
-				setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
-			}
+		while (matchIterator.hasNext())	// browse through the document
+		{
+			QRegularExpressionMatch match = matchIterator.next();
+			setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
+			// set formatting if regular expression is found
 		}
+	}
+
+	foreach (const Rule &rule, functionRules)
+	{
+		QRegularExpressionMatchIterator matchIterator = rule.regexp.globalMatch(text);
+		while (matchIterator.hasNext())
+		{
+			QRegularExpressionMatch match = matchIterator.next();
+			setFormat(match.capturedStart(), match.capturedLength(), rule.wordFormat);
+		}
+	}
 }
