@@ -69,6 +69,8 @@ IDE::IDE(QWidget *parent) :
 	connect(this, SIGNAL(pathToTexture(QString)), openGLWidget, SLOT(loadTexture(QString)));
 	// sends path to texture file to the GL widget
 
+	connect(this, SIGNAL(pathToModel(QString)), openGLWidget, SLOT(loadModel(QString)));
+
     /** ERROR OUTPUT **/
 
 	ui->textBrowser->hide();	// don't show the error pane by default

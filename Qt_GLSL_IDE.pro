@@ -39,7 +39,8 @@ HEADERS  += ide.h \
     glwidget.h \
     textedit.h \
     about.h \
-    glslsyntax.h
+    glslsyntax.h \
+    vec.h
 
 FORMS    += ide.ui
 

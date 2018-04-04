@@ -120,11 +120,11 @@
             <string>uniform sampler2D tex; // this is the texture loaded through File &gt; Texture
 uniform float time;
 uniform vec2 resolution;
+in vec2 uv;
 
 void main() 
 {
-	vec2 position = gl_FragCoord.xy / resolution;
-	gl_FragColor = texture(tex, position);
+	gl_FragColor = texture(tex, uv);
 }</string>
            </property>
           </widget>
@@ -139,9 +139,12 @@ void main()
            <property name="plainText">
             <string>uniform float time;
 layout(location = 0) in vec3 vertexPosition; // model-space position of vertex
+layout(location = 1) in vec2 uvIn;
+out vec2 uv;
 
 void main() 
 {
+	uv = uvIn;
 	gl_Position = vec4(vertexPosition, 1); // passed to geometry shader
 }</string>
            </property>
