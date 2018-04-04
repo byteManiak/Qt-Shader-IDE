@@ -18,8 +18,8 @@ IDE::IDE(QWidget *parent) :
 											  QStandardPaths::LocateDirectory);
 	// set current path to file to the home directory - makes browsing files easier
 
-    timer = new QTimer(this);
-    timer->start();
+	timer = new QTimer(this);
+	timer->start(1);
 	// make a timer for the GL widget
 
 	connect(timer, SIGNAL(timeout()), openGLWidget, SLOT(update()));
@@ -62,7 +62,7 @@ IDE::IDE(QWidget *parent) :
 
     /** CONTEXT SPECIFIC **/
 
-    connect(this, SIGNAL(strings(std::string,std::string)),
+	connect(this, SIGNAL(strings(std::string,std::string)),
 			openGLWidget, SLOT(compileShader(std::string,std::string)));
 	// directs the GL widget to compile the shader code
 

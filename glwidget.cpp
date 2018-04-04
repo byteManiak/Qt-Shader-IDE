@@ -180,10 +180,7 @@ void GLWidget::loadModel(QString path)
 	normalize();
 
 	/** WHAT IS LEFT TO DO HERE TO GET MODELS WORKING:
-	 * - check face lines (the ones starting with "f")
-	 * - implement the "f" line formats (though vn is useless in this case)
-	 * - rearrange arrays according to face numbers
-	 * - draw from element array with face numbers
+	 * - implement the "f" line formats
 	**/
 
 	show();
@@ -197,6 +194,15 @@ void GLWidget::loadModel(QString path)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*elems.size(), elems.data(), GL_STATIC_DRAW);
 	close();
+
+	QMessageBox notify;
+	if(!hasUVs && !hasNormals)
+		notify.setText("Selected model has no UV coordinates and no vertex normals. Textures and lighting will not be supported!");
+	else if(!hasUVs)
+		notify.setText("Selected model has no UV coordinates. Textures will not be supported!");
+	else if(!hasNormals)
+		notify.setText("Selected model has no vertex normals. Lighting will not be supported!");
+	notify.exec();
 }
 
 void GLWidget::paintGL()

@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <QWidget>
 #include <QMatrix4x4>
+#include <QMessageBox>
 #include <GL/glew.h>
 #include <QOpenGLWidget>
 #include <QTime>
