@@ -134,14 +134,33 @@ void GLWidget::loadModel(QString path)
 		{
 			if(!hasUVs && !hasNormals)	// if format of "f" is just "v"
 			{
-				unsigned tempElem;
-				while(std::getline(lineStream, token, ' '))
+				/** CLARIFICATION:
+				 * Because of the way this program works, in order to make a polygon face draw properly,
+				 * the following improvisations were used:
+				 * - The face is considered to be convex and as if it was drawn using GL_TRIANGLE_FAN
+				 * - As such, the face was "parsed" into adjacent triangles that all share the first
+				 * coordinate.
+				 * I have no idea what the impact of such an overhead poses, but I suspect it to be
+				 * within the bounds of O(n) in both memory and speed efficiency.
+				 **/
+
+				std::string str = lineStream.str();	// convert stream back into string
+				str = str.substr(str.find(' ')+1, str.size());
+				// get the rest of the string after the first whitespace
+				unsigned v1;
+				sscanf(str.c_str(), "%d", &v1);	// this is our first face coordinate
+				while(str.find(' ') != 0)
 				{
-					tempElem = std::atoi(token.c_str())-1;
-					//std::cout << "String: " << lineStream.str() << '\n';
-					elems.push_back(tempElem);
+					str = str.substr(str.find(' ')+1, str.size());
+					// carry on with "parsing" the other coordinates
+					unsigned v2, v3;
+					if(sscanf(str.c_str(), "%d %d", &v2, &v3) != 2) break;
+					// if 2 coordinates were not read, then the end of the face was reached
+					elems.push_back(v1-1);
+					elems.push_back(v2-1);
+					elems.push_back(v3-1);
+					// put triangle in the element array
 				}
-				std::cout << '\n';
 			}
 			else if(!hasNormals)	// if format of "f" is "v/vt"
 			{
@@ -194,11 +213,9 @@ void GLWidget::paintGL()
 	glBindTexture(GL_TEXTURE_2D, texture);
 	// bind texture to unit 0
 
-	rotation.rotate(45.f, 0.1f, 0.1f, 0.1f);
     glUniform1f(glGetUniformLocation(current_shader, "time"), time);
     glUniform2f(glGetUniformLocation(current_shader, "resolution"), this->width(), this->height());
 	glUniform1i(glGetUniformLocation(current_shader, "tex"), 0);
-	glUniform4fv(glGetUniformLocation(current_shader, "rotMat"), 1, rotation.data());
 	// update shader uniforms
 
 	glEnableVertexAttribArray(0);
