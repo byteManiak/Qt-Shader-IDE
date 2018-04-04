@@ -135,12 +135,13 @@ void GLWidget::loadModel(QString path)
 			if(!hasUVs && !hasNormals)	// if format of "f" is just "v"
 			{
 				unsigned tempElem;
-				while(lineStream)
+				while(std::getline(lineStream, token, ' '))
 				{
-					lineStream >> tempElem;
-					tempElem--;
+					tempElem = std::atoi(token.c_str())-1;
+					//std::cout << "String: " << lineStream.str() << '\n';
 					elems.push_back(tempElem);
 				}
+				std::cout << '\n';
 			}
 			else if(!hasNormals)	// if format of "f" is "v/vt"
 			{
@@ -193,9 +194,11 @@ void GLWidget::paintGL()
 	glBindTexture(GL_TEXTURE_2D, texture);
 	// bind texture to unit 0
 
+	rotation.rotate(45.f, 0.1f, 0.1f, 0.1f);
     glUniform1f(glGetUniformLocation(current_shader, "time"), time);
     glUniform2f(glGetUniformLocation(current_shader, "resolution"), this->width(), this->height());
 	glUniform1i(glGetUniformLocation(current_shader, "tex"), 0);
+	glUniform4fv(glGetUniformLocation(current_shader, "rotMat"), 1, rotation.data());
 	// update shader uniforms
 
 	glEnableVertexAttribArray(0);
