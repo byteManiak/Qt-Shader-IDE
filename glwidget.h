@@ -25,9 +25,12 @@ private:
     GLfloat time;
 	std::vector<vec3> verts;
 	std::vector<vec2> uvs;
-	std::vector<unsigned> elems;
+	std::vector<vec3> normals;
+	std::vector<unsigned> elems[3];
+	// element arrays for modelspace vertices, UVs and normals
 	GLuint vertexArray;
 	GLuint vertexBuffers[3];
+	GLuint elementBuffers[3];
 	GLuint texture;
 	bool hasUVs = false, hasNormals = false;
 

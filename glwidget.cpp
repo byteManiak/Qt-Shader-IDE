@@ -13,20 +13,27 @@ void GLWidget::initializeGL()
 
 	verts.push_back(vec3(-1.0f, -1.0f, 0.0f));
 	verts.push_back(vec3(1.0f, -1.0f, 0.0f));
-	verts.push_back(vec3(1.0f, 1.0f, 0.0f));
 	verts.push_back(vec3(-1.0f, 1.0f, 0.0f));
+	verts.push_back(vec3(1.0f, 1.0f, 0.0f));
 	uvs.push_back(vec2(0.0f, 0.0f));
 	uvs.push_back(vec2(1.0f, 0.0f));
-	uvs.push_back(vec2(1.0f, 1.0f));
 	uvs.push_back(vec2(0.0f, 1.0f));
+	uvs.push_back(vec2(1.0f, 1.0f));
 	// declare square coordinates for default shader
 
-	elems.push_back(0);
-	elems.push_back(1);
-	elems.push_back(2);
-	elems.push_back(0);
-	elems.push_back(2);
-	elems.push_back(3);
+	elems[0].push_back(0);
+	elems[0].push_back(1);
+	elems[0].push_back(2);
+	elems[0].push_back(2);
+	elems[0].push_back(1);
+	elems[0].push_back(3);
+
+	elems[1].push_back(0);
+	elems[1].push_back(1);
+	elems[1].push_back(2);
+	elems[1].push_back(2);
+	elems[1].push_back(1);
+	elems[1].push_back(3);
 
 	glGenVertexArrays(1, &vertexArray);	// create vertex array for the data that will be declared next
 	glBindVertexArray(vertexArray);	// and bind it
@@ -46,8 +53,18 @@ void GLWidget::initializeGL()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*elems.size(), elems.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*normals.size(), normals.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glGenBuffers(3, elementBuffers);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*elems[0].size(), elems[0].data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*elems[1].size(), elems[1].data(), GL_STATIC_DRAW);
 
 	glGenTextures(1, &texture);
 	// create a texture to be used in the context if needed
@@ -102,10 +119,16 @@ void GLWidget::loadModel(QString path)
 
 	verts.clear();
 	verts.shrink_to_fit();
-	elems.clear();
-	elems.shrink_to_fit();
 	uvs.clear();
 	uvs.shrink_to_fit();
+	normals.clear();
+	normals.shrink_to_fit();
+	elems[0].clear();
+	elems[0].shrink_to_fit();
+	elems[1].clear();
+	elems[1].shrink_to_fit();
+	elems[2].clear();
+	elems[2].shrink_to_fit();
 
 	std::string line;	// declare a string that will hold the contents of every line in the file
 	while(std::getline(file, line))
@@ -117,24 +140,25 @@ void GLWidget::loadModel(QString path)
 		{
 			vec3 tempVertex;
 			lineStream >> tempVertex.x >> tempVertex.y >> tempVertex.z;
-			tempVertex.z -= 0.5f;
 			verts.push_back(tempVertex);	// put the coordinates in the buffer
 		}
 		else if(token == "vt")	// look for UV coordinates
 		{
 			hasUVs = true;
-			// if line has UV coord, then we can apply v/vt or v/vt/vn when we look for "f"
 			vec2 tempVertex;
 			lineStream >> tempVertex.x >> tempVertex.y;
 			uvs.push_back(tempVertex);
 		}
-		else if(token == "vn") hasNormals = true;	// we don't need normals in the IDE (yet)
-		// if line has normal coord, then we can apply v/vt/vn or v//vn when we look for "f"
+		else if(token == "vn")
+		{
+			hasNormals = true;
+			vec3 tempVertex;
+			lineStream >> tempVertex.x >> tempVertex.y >> tempVertex.z;
+			normals.push_back(tempVertex);
+		}
 		else if(token == "f")
 		{
-			if(!hasUVs && !hasNormals)	// if format of "f" is just "v"
-			{
-				/** CLARIFICATION:
+			/** CLARIFICATION:
 				 * Because of the way this program works, in order to make a polygon face draw properly,
 				 * the following improvisations were used:
 				 * - The face is considered to be convex and as if it was drawn using GL_TRIANGLE_FAN
@@ -144,44 +168,102 @@ void GLWidget::loadModel(QString path)
 				 * within the bounds of O(n) in both memory and speed efficiency.
 				 **/
 
-				std::string str = lineStream.str();	// convert stream back into string
-				str = str.substr(str.find(' ')+1, str.size());
-				// get the rest of the string after the first whitespace
-				unsigned v1;
-				sscanf(str.c_str(), "%d", &v1);	// this is our first face coordinate
-				while(str.find(' ') != 0)
+			/** CODE IN TESTING BELOW **/
+
+			unsigned v1, vt1, vn1;
+			std::string str = lineStream.str();
+			str = str.substr(str.find(' ')+1, str.size());
+			if(sscanf(str.c_str(), "%d/%d/%d", &v1, &vt1, &vn1) == 3)	// if format of "f" is "v/vt/vn"
+			{
+				while(str.find(' ')!=0)
 				{
-					str = str.substr(str.find(' ')+1, str.size());
-					// carry on with "parsing" the other coordinates
-					unsigned v2, v3;
-					if(sscanf(str.c_str(), "%d %d", &v2, &v3) != 2) break;
-					// if 2 coordinates were not read, then the end of the face was reached
-					elems.push_back(v1-1);
-					elems.push_back(v2-1);
-					elems.push_back(v3-1);
-					// put triangle in the element array
+				unsigned v2, vt2, vn2, v3, vt3, vn3;
+				str = str.substr(str.find(' ')+1, str.size());
+				if(sscanf(str.c_str(), "%d/%d/%d %d/%d/%d", &v2, &vt2, &vn2, &v3, &vt3, &vn3) != 6) break;
+				elems[0].push_back(v1-1);
+				elems[0].push_back(v2-1);
+				elems[0].push_back(v3-1);
+				// push indices to element array containing modelspace vertices
+				elems[1].push_back(vt1-1);
+				elems[1].push_back(vt2-1);
+				elems[1].push_back(vt3-1);
+				// push indices to element array containing UVs
+				elems[2].push_back(vn1-1);
+				elems[2].push_back(vn2-1);
+				elems[2].push_back(vn3-1);
+				// push indices to element array containing normals
 				}
 			}
-			else if(!hasNormals)	// if format of "f" is "v/vt"
+			else if(sscanf(str.c_str(), "%d//%d", &v1, &vn1) == 2)	// if format of "f" is "v//vn"
 			{
-
+				while(str.find(' ')!=0)
+				{
+				unsigned v2, vn2, v3, vn3;
+				str = str.substr(str.find(' ')+1, str.size());
+				if(sscanf(str.c_str(), "%d//%d %d//%d", &v2, &vn2, &v3, &vn3) != 4) break;
+				elems[0].push_back(v1-1);
+				elems[0].push_back(v2-1);
+				elems[0].push_back(v3-1);
+				// push indices to element array containing modelspace vertices
+				elems[1].push_back(0);
+				elems[1].push_back(0);
+				elems[1].push_back(0);
+				// push indices to element array containing UVs
+				elems[2].push_back(vn1-1);
+				elems[2].push_back(vn2-1);
+				elems[2].push_back(vn3-1);
+				// push indices to element array containing normals
+				}
 			}
-			else if(!hasUVs)	// if format of "f" is "v//vn"
+			else if(sscanf(str.c_str(), "%d/%d", &v1, &vt1) == 2)	// if format of "f" is "v/vt"
 			{
-
+				while(str.find(' ')!=0)
+				{
+				unsigned v2, vt2, v3, vt3;
+				str = str.substr(str.find(' ')+1, str.size());
+				if(sscanf(str.c_str(), "%d/%d %d/%d", &v2, &vt2, &v3, &vt3) != 4) break;
+				elems[0].push_back(v1-1);
+				elems[0].push_back(v2-1);
+				elems[0].push_back(v3-1);
+				// push indices to element array containing modelspace vertices
+				elems[1].push_back(vt1-1);
+				elems[1].push_back(vt2-1);
+				elems[1].push_back(vt3-1);
+				// push indices to element array containing UVs
+				elems[2].push_back(0);
+				elems[2].push_back(0);
+				elems[2].push_back(0);
+				// push indices to element array containing normals
+				}
 			}
-			else	// if format of "f" is "v/vt/vn"
+			else	// if format of "f" is "v"
 			{
-
+				while(str.find(' ')!=0)
+				{
+				unsigned v2, v3;
+				str = str.substr(str.find(' ')+1, str.size());
+				if(sscanf(str.c_str(), "%d %d", &v2, &v3) != 2) break;
+				elems[0].push_back(v1-1);
+				elems[0].push_back(v2-1);
+				elems[0].push_back(v3-1);
+				// push indices to element array containing modelspace vertices
+				elems[1].push_back(0);
+				elems[1].push_back(0);
+				elems[1].push_back(0);
+				// push indices to element array containing UVs
+				elems[2].push_back(0);
+				elems[2].push_back(0);
+				elems[2].push_back(0);
+				// push indices to element array containing normals
+				}
 			}
 		}
 	}
+	for(auto i : elems[0]) std::cout << i << ' ';
+	std::cout << '\n';
+	for(auto i : elems[1]) std::cout << i << ' ';
 
 	normalize();
-
-	/** WHAT IS LEFT TO DO HERE TO GET MODELS WORKING:
-	 * - implement the "f" line formats
-	**/
 
 	show();
 
@@ -191,8 +273,18 @@ void GLWidget::loadModel(QString path)
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vec2)*uvs.size(), uvs.data(), GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[2]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned)*elems.size(), elems.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vec3)*normals.size(), normals.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[0]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*elems[0].size(), elems[0].data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*elems[1].size(), elems[1].data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[2]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int)*elems[2].size(), elems[2].data(), GL_STATIC_DRAW);
+
 	close();
 
 	QMessageBox notify;
@@ -202,7 +294,7 @@ void GLWidget::loadModel(QString path)
 		notify.setText("Selected model has no UV coordinates. Textures will not be supported!");
 	else if(!hasNormals)
 		notify.setText("Selected model has no vertex normals. Lighting will not be supported!");
-	notify.exec();
+	if(notify.text().size() > 0) notify.exec();
 }
 
 void GLWidget::paintGL()
@@ -225,13 +317,16 @@ void GLWidget::paintGL()
 	// update shader uniforms
 
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[0]);
+	glDrawElements(GL_TRIANGLES, elems[0].size(), GL_UNSIGNED_INT, 0);
+
 	glEnableVertexAttribArray(1);
-    // bind current vertex array
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[1]);
+	glDrawElements(GL_TRIANGLES, elems[1].size(), GL_UNSIGNED_INT, 0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffers[2]);
-
-	glDrawElements(GL_TRIANGLES, elems.size(), GL_UNSIGNED_INT, 0);
-	// draw the current array buffer
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffers[2]);
+	glDrawElements(GL_TRIANGLES, elems[2].size(), GL_UNSIGNED_INT, 0);
 }
 
 void GLWidget::compileShader(std::string v, std::string f)
@@ -326,12 +421,26 @@ void GLWidget::normalize()
 		if(i.y > max) max = i.y;
 		if(i.z > max) max = i.z;
 	}
-	for(auto &&i : verts)
+	if(max > 1.0f)
+		for(auto &&i : verts)
+		{
+			i.x /= max;
+			i.y /= max;
+			i.z /= max;
+		}
+	for(auto i : normals)
 	{
-		i.x /= max;
-		i.y /= max;
-		i.z /= max;
+		if(i.x > max) max = i.x;
+		if(i.y > max) max = i.y;
+		if(i.z > max) max = i.z;
 	}
+	if(max > 1.0f)
+		for(auto &&i : normals)
+		{
+			i.x /= max;
+			i.y /= max;
+			i.z /= max;
+		}
 }
 
 GLWidget::~GLWidget()

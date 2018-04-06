@@ -140,6 +140,7 @@ void main()
             <string>uniform float time;
 layout(location = 0) in vec3 vertexPosition; // model-space position of vertex
 layout(location = 1) in vec2 uvIn;
+layout(location = 2) in vec3 vertexNormal;
 out vec2 uv;
 
 void main() 
